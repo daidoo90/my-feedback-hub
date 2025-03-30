@@ -1,0 +1,20 @@
+services:
+  myfeedbackhub.api:
+    image: ${DOCKER_REGISTRY-}myfeedbackhubapi
+    container_name: myfeedbackhub-api
+    build:
+      context: .
+      dockerfile: src/MyFeedbackHub.Api/Dockerfile
+    environment:
+        - ASPNETCORE_URLS=http://+:57118;https://+:57119
+        - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+        - 57118:57118
+        - 57119:57119
+    restart: always 
+    networks:
+        - myfeedbackhub-network
+networks:
+  myfeedbackhub-network:
+    name: myfeeedbackhub-network
+    driver: bridge
