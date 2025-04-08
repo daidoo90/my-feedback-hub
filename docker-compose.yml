@@ -6,14 +6,39 @@ services:
       context: .
       dockerfile: src/MyFeedbackHub.Api/Dockerfile
     environment:
-        - ASPNETCORE_URLS=http://+:57118;https://+:57119
+        - ASPNETCORE_URLS=http://+:4002;https://+:4003;http://+:4005
         - ASPNETCORE_ENVIRONMENT=Development
     ports:
-        - 57118:57118
-        - 57119:57119
+        - 4002:4002
+        - 4003:4003
+        - 4005:4005
     restart: always 
     networks:
         - myfeedbackhub-network
+  
+  myfeedbackhub.postgresql.server:
+    container_name: myfeedbackhub.postgresql.server
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=myfeedbackhub
+      - POSTGRES_USER=sa
+      - POSTGRES_PASSWORD=YourStrong!Password123
+    volumes:
+      - ./infra/postgresql/temp_pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - myfeedbackhub-network
+
+  myfeedbackhub.redis.cache:
+    container_name: myfeedbackhub.redis.cache
+    image: redis:latest
+    restart: always
+    ports:
+        - "6379:6379"
+    networks:
+        - myfeedbackhub-network
+
 networks:
   myfeedbackhub-network:
     name: myfeeedbackhub-network
