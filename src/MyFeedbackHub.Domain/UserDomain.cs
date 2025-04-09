@@ -18,6 +18,8 @@ public class UserDomain
 
     public DateTimeOffset CreatedOn { get; set; }
 
+    public DateTimeOffset UpdatedOn { get; set; }
+
     public Guid BusinessId { get; set; }
 
     public bool IsActive { get; set; }

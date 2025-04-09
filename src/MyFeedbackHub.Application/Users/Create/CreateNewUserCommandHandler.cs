@@ -36,6 +36,7 @@ public sealed class CreateNewUserCommandHandler(
             Password = hashedPassword,
             Salt = Convert.ToBase64String(salt),
             BusinessId = command.BusinessId,
+            IsActive = true,
             CreatedOn = DateTime.UtcNow
         }, cancellationToken);
 

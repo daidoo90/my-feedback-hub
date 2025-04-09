@@ -7,5 +7,7 @@ public sealed class ErrorCodes
         public const string Password_Invalid = "password_invalid";
 
         public const string Username_Invalid = "username_invalid";
+
+        public const string UserId_Invalid = "user_id_invalid";
     }
 }
