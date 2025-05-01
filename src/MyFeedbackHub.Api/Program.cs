@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using MyFeedbackHub.Api.Shared;
 using MyFeedbackHub.Api.Shared.Registration;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
+using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Infrastructure.DAL.Context;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +15,9 @@ builder.Services
     .AddSwagger()
     .AddEndpointsApiExplorer()
     .AddInfrastructure(builder)
-    .AddDomain();
+    .AddDomain()
+    .AddHttpContextAccessor()
+    .AddScoped<IUserContext, UserContext>();
 
 var app = builder.Build();
 

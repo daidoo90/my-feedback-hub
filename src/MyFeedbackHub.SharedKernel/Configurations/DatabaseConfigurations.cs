@@ -1,6 +1,11 @@
-﻿namespace MyFeedbackHub.SharedKernel.Configurations;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class DatabaseConfigurations
+namespace MyFeedbackHub.SharedKernel.Configurations;
+
+public sealed class DatabaseConfigurations
 {
-    public string ConnectionString { get; set; } = default!;
+    public const string ConfigurationName = "Database";
+
+    [Required]
+    public string ConnectionString { get; set; } = string.Empty;
 }

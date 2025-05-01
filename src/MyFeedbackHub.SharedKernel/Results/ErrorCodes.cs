@@ -1,13 +1,22 @@
-﻿namespace MyFeedbackHub.SharedKernel.ErrorCodes;
+﻿namespace MyFeedbackHub.SharedKernel.Results;
 
 public sealed class ErrorCodes
 {
     public sealed class User
     {
-        public const string Password_Invalid = "password_invalid";
+        public const string PasswordInvalid = "password_invalid";
+        public const string UsernameInvalid = "username_invalid";
+        public const string UserInvalid = "user_invalid";
+    }
 
-        public const string Username_Invalid = "username_invalid";
+    public sealed class Project
+    {
+        public const string ProjectNameInvalid = "project_name_invalid";
+        public const string ProjectInvalid = "project_invalid";
+    }
 
-        public const string UserId_Invalid = "user_id_invalid";
+    public sealed class Organization
+    {
+        public const string OrganizationInvalid = "organization_invalid";
     }
 }

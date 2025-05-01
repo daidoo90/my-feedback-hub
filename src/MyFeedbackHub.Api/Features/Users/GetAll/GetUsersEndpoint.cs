@@ -1,16 +1,52 @@
-﻿using MyFeedbackHub.Api.Shared.Utils.Carter;
+﻿using MyFeedbackHub.Api.Features.Users.GetById;
+using MyFeedbackHub.Api.Shared.Utils;
+using MyFeedbackHub.Api.Shared.Utils.Carter;
+using MyFeedbackHub.Application.Shared.Abstractions;
+using MyFeedbackHub.Application.Users.GetAll;
 
 namespace MyFeedbackHub.Api.Features.Users.GetAll;
+
+public sealed class UsersResponseDto
+{
+    public int TotalCount { get; init; }
+
+    public IEnumerable<UserResponseDto> Users { get; init; }
+
+    internal static UsersResponseDto? From(GetAllUsersResponse usersResponse)
+    {
+        return new UsersResponseDto
+        {
+            TotalCount = usersResponse.TotalCount,
+            Users = usersResponse
+                .Users
+                .Select(UserResponseDto.From)
+                .ToList(),
+        };
+    }
+}
+
 
 public sealed class GetUsersEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/users", () =>
+        app.MapGet("/users", async (
+           int? pageNumber,
+           int? pageSize,
+           IQueryHandler<GetAllUsersQueryRequest, GetAllUsersResponse> handler,
+           IUserContext userContext,
+           CancellationToken cancellationToken) =>
         {
-            return Results.Ok();
+            var result = await handler.HandleAsync(new GetAllUsersQueryRequest(pageNumber, pageSize), cancellationToken);
+
+            if (result.HasFailed)
+            {
+                return result.ToBadRequest("Get all users failure");
+            }
+
+            return Results.Ok(UsersResponseDto.From(result!.Data));
         })
-        .WithName("GetUsers")
+       .WithName("GetUsers")
         .Produces(StatusCodes.Status200OK)
         .WithSummary("Get users")
         .WithDescription("Get users")

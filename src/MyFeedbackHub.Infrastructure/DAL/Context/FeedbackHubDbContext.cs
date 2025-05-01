@@ -16,11 +16,9 @@ public class FeedbackHubDbContext : DbContext, IFeedbackHubDbContext
     {
     }
 
+    public DbSet<OrganizationDomain> Organizations { get; set; }
+    public DbSet<ProjectDomain> Projects { get; set; }
     public DbSet<UserDomain> Users { get; set; }
-
-    public DbSet<BusinessDomain> Businesses { get; set; }
-
-    public DbSet<BoardDomain> Boards { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

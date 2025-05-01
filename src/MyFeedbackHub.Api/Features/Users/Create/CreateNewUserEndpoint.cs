@@ -1,13 +1,15 @@
-﻿using MyFeedbackHub.Api.Shared.Utils.Carter;
+﻿using MyFeedbackHub.Api.Shared.Utils;
+using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Application.Users.Create;
+using MyFeedbackHub.Domain.Types;
 
 namespace MyFeedbackHub.Api.Features.Users.Create;
 
 public sealed record CreateNewUserRequestDto(
     string Username,
     string Password,
-    Guid BusinessId);
+    UserRoleType Role);
 
 public sealed class CreateNewUserEndpoint : ICarterModule
 {
@@ -16,21 +18,20 @@ public sealed class CreateNewUserEndpoint : ICarterModule
         app.MapPost("/users", async (
             CreateNewUserRequestDto request,
             ICommandHandler<CreateNewUserCommand> command,
+            IUserContext userContext,
             CancellationToken cancellationToken = default) =>
         {
             var result = await command.HandleAsync(
-                new CreateNewUserCommand(request.Username, request.Password, request.BusinessId),
+                new CreateNewUserCommand(
+                    request.Username,
+                    request.Password,
+                    userContext.OrganizationId,
+                    userContext.Role),
                 cancellationToken);
 
             if (result.HasFailed)
             {
-                return Results.Problem(
-                    statusCode: StatusCodes.Status400BadRequest,
-                    title: "User creation failure",
-                    extensions: new Dictionary<string, object?>()
-                    {
-                        ["errorCode"] = result.ErrorCode
-                    });
+                return result.ToBadRequest("User creation failure");
             }
 
             return Results.Ok();

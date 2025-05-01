@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MyFeedbackHub.SharedKernel.Configurations;
 using System.Text;
@@ -9,11 +10,14 @@ internal static class Identity
 {
     internal static IServiceCollection AddIdentity(this IServiceCollection services, WebApplicationBuilder builder)
     {
-        var identitySettings = new IdentityConfigurations();
-        var identityConfigurationSection = builder.Configuration.GetSection(nameof(IdentityConfigurations));
-        identityConfigurationSection.Bind(identitySettings);
+        builder.Services
+            .AddOptions<IdentityConfigurations>()
+            .BindConfiguration(IdentityConfigurations.ConfigurationName)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
-        builder.Services.AddSingleton(identitySettings);
+        var provider = services.BuildServiceProvider();
+        var identitySettings = provider.GetRequiredService<IOptions<IdentityConfigurations>>().Value;
 
         builder.Services
                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

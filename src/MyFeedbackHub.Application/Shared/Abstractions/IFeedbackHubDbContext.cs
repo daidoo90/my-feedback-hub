@@ -5,11 +5,8 @@ namespace MyFeedbackHub.Application.Shared.Abstractions;
 
 public interface IFeedbackHubDbContext
 {
+    DbSet<OrganizationDomain> Organizations { get; }
+    DbSet<ProjectDomain> Projects { get; }
     DbSet<UserDomain> Users { get; }
-
-    DbSet<BusinessDomain> Businesses { get; }
-
-    DbSet<BoardDomain> Boards { get; }
-
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

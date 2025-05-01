@@ -6,9 +6,9 @@ internal class ConfiguratorConstants
         internal static class Public
         {
             internal static string Name = "public";
-            internal static string Business = "Business";
+            internal static string Organization = "Organization";
             internal static string User = "User";
-            internal static string Board = "Board";
+            internal static string Project = "Project";
         }
 
         internal static class Feedback

@@ -1,5 +1,7 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using MyFeedbackHub.Api.Services.Abstraction;
+using MyFeedbackHub.Domain;
 using MyFeedbackHub.SharedKernel.Configurations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -8,19 +10,20 @@ using System.Text;
 
 namespace MyFeedbackHub.Api.Services;
 
-public class AuthService(IdentityConfigurations identityConfigurations) : IAuthService
+public class AuthService(IOptions<IdentityConfigurations> identityConfigurations) : IAuthService
 {
-    private readonly IdentityConfigurations _identityConfigurations = identityConfigurations;
+    private readonly IdentityConfigurations _identityConfigurations = identityConfigurations.Value;
 
-    public string GenerateAccessToken(string username)
+    public string GenerateAccessToken(UserDomain user)
     {
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-            new Claim(ClaimTypes.Name, "Daniel Dimitrov"),
-            new Claim(ClaimTypes.Email, username),
-            new Claim("userId", Guid.NewGuid().ToString())
+            new Claim(ClaimTypes.Role, user.Role.ToString()),
+            new Claim("OrganizationId", user.OrganizationId.ToString()),
+            new Claim(ClaimTypes.Email, user.Username),
+            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString())
         };
 
         var tokenDescriptor = new SecurityTokenDescriptor

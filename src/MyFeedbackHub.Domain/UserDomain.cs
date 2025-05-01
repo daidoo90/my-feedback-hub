@@ -1,6 +1,8 @@
-﻿namespace MyFeedbackHub.Domain;
+﻿using MyFeedbackHub.Domain.Types;
 
-public class UserDomain
+namespace MyFeedbackHub.Domain;
+
+public sealed class UserDomain
 {
     public Guid UserId { get; set; }
 
@@ -8,21 +10,31 @@ public class UserDomain
 
     public string? LastName { get; set; }
 
-    public string Username { get; set; } = string.Empty;
-
     public string? PhoneNumber { get; set; }
 
-    public string Password { get; set; } = string.Empty;
+    public required string Username { get; set; }
 
-    public string Salt { get; set; } = string.Empty;
+    public required string Password { get; set; }
+
+    public required string Salt { get; set; }
+
+    public required UserRoleType Role { get; set; }
+
+    public required UserStatusType Status { get; set; }
+
+    public Guid OrganizationId { get; set; }
+
+    public OrganizationDomain Organization { get; set; } = null!;
 
     public DateTimeOffset CreatedOn { get; set; }
 
-    public DateTimeOffset UpdatedOn { get; set; }
+    public Guid? CreatedByUserId { get; set; }
 
-    public Guid BusinessId { get; set; }
+    public DateTimeOffset? UpdatedOn { get; set; }
 
-    public bool IsActive { get; set; }
+    public Guid? UpdatedOnByUserId { get; set; }
 
-    public BusinessDomain Business { get; set; } = null!;
+    public DateTimeOffset? DeletedOn { get; set; }
+
+    public Guid? DeletedByUserId { get; set; }
 }

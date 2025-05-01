@@ -22,68 +22,91 @@ namespace MyFeedbackHub.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("MyFeedbackHub.Domain.BoardDomain", b =>
+            modelBuilder.Entity("MyFeedbackHub.Domain.OrganizationDomain", b =>
                 {
-                    b.Property<Guid>("BoardId")
+                    b.Property<Guid>("OrganizationId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("BusinessId")
+                    b.Property<Guid>("CreatedByUserId")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<bool>("IsPrivate")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Title")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.HasKey("BoardId");
-
-                    b.HasIndex("BusinessId");
-
-                    b.ToTable("Board", "public");
-                });
-
-            modelBuilder.Entity("MyFeedbackHub.Domain.BusinessDomain", b =>
-                {
-                    b.Property<Guid>("BusinessId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Address")
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
 
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("DeletedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<string>("Source")
+                    b.Property<string>("TaxID")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("UpdatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UpdatedOnByUserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("OrganizationId");
+
+                    b.ToTable("Organization", "public");
+                });
+
+            modelBuilder.Entity("MyFeedbackHub.Domain.ProjectDomain", b =>
+                {
+                    b.Property<Guid>("ProjectId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CreatedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("DeletedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<int>("TeamSize")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("VATNumber")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                    b.Property<DateTimeOffset?>("UpdatedOn")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Website")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                    b.Property<Guid?>("UpdatedOnByUserId")
+                        .HasColumnType("uuid");
 
-                    b.HasKey("BusinessId");
+                    b.Property<string>("Url")
+                        .HasColumnType("text");
 
-                    b.ToTable("Business", "public");
+                    b.HasKey("ProjectId");
+
+                    b.HasIndex("OrganizationId");
+
+                    b.ToTable("Project", "public");
                 });
 
             modelBuilder.Entity("MyFeedbackHub.Domain.UserDomain", b =>
@@ -92,22 +115,28 @@ namespace MyFeedbackHub.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("BusinessId")
+                    b.Property<Guid?>("CreatedByUserId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("DeletedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FirstName")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("LastName")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -117,9 +146,21 @@ namespace MyFeedbackHub.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Salt")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("UpdatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UpdatedOnByUserId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -128,36 +169,85 @@ namespace MyFeedbackHub.Infrastructure.Migrations
 
                     b.HasKey("UserId");
 
-                    b.HasIndex("BusinessId");
+                    b.HasIndex("OrganizationId");
 
                     b.ToTable("User", "public");
                 });
 
-            modelBuilder.Entity("MyFeedbackHub.Domain.BoardDomain", b =>
+            modelBuilder.Entity("MyFeedbackHub.Domain.OrganizationDomain", b =>
                 {
-                    b.HasOne("MyFeedbackHub.Domain.BusinessDomain", "Business")
-                        .WithMany("Boards")
-                        .HasForeignKey("BusinessId")
+                    b.OwnsOne("MyFeedbackHub.Domain.Address", "Address", b1 =>
+                        {
+                            b1.Property<Guid>("OrganizationDomainOrganizationId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("City")
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("City");
+
+                            b1.Property<string>("Country")
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("Country");
+
+                            b1.Property<string>("State")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)")
+                                .HasColumnName("State");
+
+                            b1.Property<string>("StreetLine1")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)")
+                                .HasColumnName("StreetLine1");
+
+                            b1.Property<string>("StreetLine2")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)")
+                                .HasColumnName("StreetLine2");
+
+                            b1.Property<string>("ZipCode")
+                                .HasMaxLength(10)
+                                .HasColumnType("character varying(10)")
+                                .HasColumnName("ZipCode");
+
+                            b1.HasKey("OrganizationDomainOrganizationId");
+
+                            b1.ToTable("Organization", "public");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrganizationDomainOrganizationId");
+                        });
+
+                    b.Navigation("Address")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFeedbackHub.Domain.ProjectDomain", b =>
+                {
+                    b.HasOne("MyFeedbackHub.Domain.OrganizationDomain", "Organization")
+                        .WithMany("Projects")
+                        .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Business");
+                    b.Navigation("Organization");
                 });
 
             modelBuilder.Entity("MyFeedbackHub.Domain.UserDomain", b =>
                 {
-                    b.HasOne("MyFeedbackHub.Domain.BusinessDomain", "Business")
+                    b.HasOne("MyFeedbackHub.Domain.OrganizationDomain", "Organization")
                         .WithMany("Users")
-                        .HasForeignKey("BusinessId")
+                        .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Business");
+                    b.Navigation("Organization");
                 });
 
-            modelBuilder.Entity("MyFeedbackHub.Domain.BusinessDomain", b =>
+            modelBuilder.Entity("MyFeedbackHub.Domain.OrganizationDomain", b =>
                 {
-                    b.Navigation("Boards");
+                    b.Navigation("Projects");
 
                     b.Navigation("Users");
                 });

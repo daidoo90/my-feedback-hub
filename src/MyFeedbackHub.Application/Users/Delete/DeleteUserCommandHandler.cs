@@ -1,36 +1,33 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.SharedKernel.ErrorCodes;
+using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
 
 namespace MyFeedbackHub.Application.Users.Delete;
 
 public sealed record DeleteUserCommand(Guid UserId);
 
-public class DeleteUserCommandHandler : ICommandHandler<DeleteUserCommand>
+public sealed class DeleteUserCommandHandler(
+    IFeedbackHubDbContext dbContext,
+    IUserContext userContext) : ICommandHandler<DeleteUserCommand>
 {
-    private readonly IFeedbackHubDbContext _dbContext;
-
-    public DeleteUserCommandHandler(IFeedbackHubDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public async Task<ServiceResult> HandleAsync(DeleteUserCommand command, CancellationToken cancellationToken = default)
     {
-        var user = await _dbContext
+        var user = await dbContext
             .Users
-            .SingleOrDefaultAsync(u => u.UserId == command.UserId, cancellationToken);
+            .SingleOrDefaultAsync(u => u.UserId == command.UserId
+                                        && u.OrganizationId == userContext.OrganizationId, cancellationToken);
 
-        if (!user?.IsActive ?? true)
+        if (user == null || user.Status == UserStatusType.Inactive)
         {
-            return ServiceResult.WithError(ErrorCodes.User.UserId_Invalid);
+            return ServiceResult.WithError(ErrorCodes.User.UserInvalid);
         }
 
-        user!.IsActive = false;
-        user!.UpdatedOn = DateTime.UtcNow;
+        user.Status = UserStatusType.Inactive;
+        user.DeletedOn = DateTimeOffset.UtcNow;
+        user.DeletedByUserId = userContext.UserId;
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         return ServiceResult.Success;
     }

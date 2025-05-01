@@ -1,8 +1,17 @@
-﻿namespace MyFeedbackHub.SharedKernel.Configurations;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class IdentityConfigurations
+namespace MyFeedbackHub.SharedKernel.Configurations;
+
+public sealed class IdentityConfigurations
 {
-    public string SecretKey { get; set; } = default!;
-    public string Issuer { get; set; } = default!;
-    public string Audience { get; set; } = default!;
+    public const string ConfigurationName = "Identity";
+
+    [Required]
+    public string SecretKey { get; init; } = string.Empty;
+
+    [Required]
+    public string Issuer { get; init; } = string.Empty;
+
+    [Required]
+    public string Audience { get; init; } = string.Empty;
 }

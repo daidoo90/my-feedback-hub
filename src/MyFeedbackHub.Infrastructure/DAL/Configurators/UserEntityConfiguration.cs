@@ -20,11 +20,13 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserDomain>, IEn
 
         builder
             .Property(u => u.FirstName)
-            .HasMaxLength(50);
+            .HasMaxLength(50)
+            .HasDefaultValue(null);
 
         builder
             .Property(u => u.LastName)
-            .HasMaxLength(50);
+            .HasMaxLength(50)
+            .HasDefaultValue(null);
 
         builder
             .Property(u => u.Username)
@@ -33,7 +35,8 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserDomain>, IEn
 
         builder
             .Property(u => u.PhoneNumber)
-            .HasMaxLength(50);
+            .HasMaxLength(50)
+            .HasDefaultValue(null);
 
         builder
             .Property(u => u.Password)
@@ -44,8 +47,8 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserDomain>, IEn
             .IsRequired();
 
         builder
-            .HasOne(u => u.Business)
+            .HasOne(u => u.Organization)
             .WithMany(b => b.Users)
-            .HasForeignKey(u => u.BusinessId);
+            .HasForeignKey(u => u.OrganizationId);
     }
 }

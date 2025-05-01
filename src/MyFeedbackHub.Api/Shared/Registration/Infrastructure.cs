@@ -1,4 +1,5 @@
-﻿using MyFeedbackHub.Application.Shared.Abstractions;
+﻿using Microsoft.Extensions.Options;
+using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Infrastructure.Common;
 using MyFeedbackHub.Infrastructure.Services;
 using MyFeedbackHub.SharedKernel.Configurations;
@@ -16,11 +17,15 @@ internal static class Infrastructure
 
     private static IServiceCollection AddDb(this IServiceCollection services, WebApplicationBuilder builder)
     {
-        var dbSettings = new DatabaseConfigurations();
-        var dbConfigurationSection = builder.Configuration.GetSection(nameof(DatabaseConfigurations));
-        dbConfigurationSection.Bind(dbSettings);
+        builder.Services
+            .AddOptions<DatabaseConfigurations>()
+            .BindConfiguration(DatabaseConfigurations.ConfigurationName)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
-        services.AddSingleton(dbSettings);
+        var provider = services.BuildServiceProvider();
+        var dbSettings = provider.GetRequiredService<IOptions<DatabaseConfigurations>>().Value;
+
         services.AddSingleton<ICryptoService, CryptoService>();
 
         services.AddInfra(dbSettings.ConnectionString);
