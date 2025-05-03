@@ -16,30 +16,33 @@ public sealed record UpdateOrganizationCommand(
 
 public sealed class UpdateOrganizationCommandHandler(
     IFeedbackHubDbContext dbContext,
-    IUserContext userContext)
+    IUserContext currentUser)
     : ICommandHandler<UpdateOrganizationCommand>
 {
     public async Task<ServiceResult> HandleAsync(UpdateOrganizationCommand command, CancellationToken cancellationToken = default)
     {
         var organization = await dbContext
             .Organizations
-            .SingleOrDefaultAsync(o => o.OrganizationId == userContext.OrganizationId, cancellationToken);
+            .SingleOrDefaultAsync(o => o.OrganizationId == currentUser.OrganizationId, cancellationToken);
 
         if (organization == null)
         {
             return ServiceResult.WithError(ErrorCodes.Organization.OrganizationInvalid);
         }
 
-        organization.Name = command.Name;
-        organization.TaxID = command.TaxId;
-        organization.Address.Country = command.Country;
-        organization.Address.City = command.City;
-        organization.Address.ZipCode = command.ZipCode;
-        organization.Address.State = command.State;
-        organization.Address.StreetLine1 = command.StreetLine1;
-        organization.Address.StreetLine2 = command.StreetLine2;
-        organization.UpdatedOn = DateTimeOffset.UtcNow;
-        organization.UpdatedOnByUserId = userContext.UserId;
+        organization.Update(
+            command.Name,
+            command.TaxId,
+            DateTimeOffset.UtcNow,
+            currentUser.UserId);
+
+        organization.Address.Update(
+            command.Country,
+            command.City,
+            command.ZipCode,
+            command.State,
+            command.StreetLine1,
+            command.StreetLine2);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

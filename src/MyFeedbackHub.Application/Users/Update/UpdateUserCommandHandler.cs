@@ -13,7 +13,7 @@ public sealed record UpdateUserCommand(
 
 public sealed class UpdateUserCommandHandler(
     IFeedbackHubDbContext dbContext,
-    IUserContext userContext) : ICommandHandler<UpdateUserCommand>
+    IUserContext currentUser) : ICommandHandler<UpdateUserCommand>
 {
     public async Task<ServiceResult> HandleAsync(UpdateUserCommand command, CancellationToken cancellationToken = default)
     {
@@ -26,12 +26,12 @@ public sealed class UpdateUserCommandHandler(
             return ServiceResult.WithError(ErrorCodes.User.UserInvalid);
         }
 
-        user.FirstName = command.FirstName;
-        user.LastName = command.LastName;
-        user.PhoneNumber = command.PhoneNumber;
-        user.Username = command.Username;
-        user.UpdatedOn = DateTimeOffset.UtcNow;
-        user.UpdatedOnByUserId = userContext.UserId;
+        user.Update(
+            command.FirstName,
+            command.LastName,
+            command.PhoneNumber,
+            DateTimeOffset.UtcNow,
+            currentUser.UserId);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

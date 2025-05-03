@@ -33,45 +33,31 @@ public sealed class CreateNewOrganizationCommandHandler(
         }
 
         var now = DateTimeOffset.UtcNow;
-        var organization = new OrganizationDomain
-        {
-            Name = command.CompanyName,
-            CreatedOn = now,
-            IsDeleted = false
-        };
-
-        await dbContext.Organizations.AddAsync(organization, cancellationToken);
-
-        var project = new ProjectDomain
-        {
-            CreatedOn = now,
-            IsDeleted = false,
-            Name = "Default Project",
-            Organization = organization
-        };
-
-        await dbContext.Projects.AddAsync(project, cancellationToken);
+        var organization = OrganizationDomain.Create(command.CompanyName, now);
 
         var hashedPassword = cryptoService.HashPassword(command.Password, out var salt);
 
-        var user = new UserDomain
-        {
-            Username = command.Username,
-            Password = hashedPassword,
-            Salt = Convert.ToBase64String(salt),
-            OrganizationId = organization.OrganizationId,
-            CreatedOn = DateTime.UtcNow,
-            Status = UserStatusType.Active,
-            Role = UserRoleType.OrganizationAdmin,
-            Organization = organization
-        };
+        var user = UserDomain.Create(
+            command.Username,
+            hashedPassword,
+            Convert.ToBase64String(salt),
+            organization,
+            UserStatusType.Active,
+            UserRoleType.OrganizationAdmin,
+            now,
+            null);
 
+        var project = ProjectDomain.Create(
+            command.CompanyName,
+            organization,
+            now,
+            user.UserId);
+
+        organization.SetCreatedBy(user.UserId);
+
+        await dbContext.Organizations.AddAsync(organization, cancellationToken);
         await dbContext.Users.AddAsync(user, cancellationToken);
-
-        await dbContext.SaveChangesAsync(cancellationToken);
-
-        organization.CreatedByUserId = user.UserId;
-        project.CreatedByUserId = user.UserId;
+        await dbContext.Projects.AddAsync(project, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

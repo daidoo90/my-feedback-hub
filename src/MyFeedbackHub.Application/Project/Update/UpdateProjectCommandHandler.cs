@@ -12,7 +12,7 @@ public sealed record UpdateProjectCommand(
 
 public sealed class UpdateProjectCommandHandler(
     IFeedbackHubDbContext dbContext,
-    IUserContext userContext)
+    IUserContext currentUser)
     : ICommandHandler<UpdateProjectCommand>
 {
     public async Task<ServiceResult> HandleAsync(UpdateProjectCommand command, CancellationToken cancellationToken = default)
@@ -20,7 +20,7 @@ public sealed class UpdateProjectCommandHandler(
         var project = await dbContext
             .Projects
             .SingleOrDefaultAsync(p => p.ProjectId == command.ProjectId
-                                        && p.OrganizationId == userContext.OrganizationId,
+                                        && p.OrganizationId == currentUser.OrganizationId,
             cancellationToken);
 
         if (project == null)
@@ -28,11 +28,12 @@ public sealed class UpdateProjectCommandHandler(
             return ServiceResult.WithError(ErrorCodes.Project.ProjectInvalid);
         }
 
-        project.Name = !string.IsNullOrEmpty(command.Name) ? command.Name : project.Name;
-        project.Url = !string.IsNullOrEmpty(command.Url) ? command.Url : project.Url;
-        project.Description = !string.IsNullOrEmpty(command.Description) ? command.Description : project.Description;
-        project.UpdatedOn = DateTimeOffset.UtcNow;
-        project.UpdatedOnByUserId = userContext.UserId;
+        project.Update(
+            command.Name,
+            command.Url,
+            command.Description,
+            DateTimeOffset.UtcNow,
+            currentUser.UserId);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

@@ -11,7 +11,7 @@ public sealed record CreateNewProjectCommand(
 
 public sealed class CreateNewProjectCommandHandler(
     IFeedbackHubDbContext dbContext,
-    IUserContext userContext)
+    IUserContext currentUser)
     : ICommandHandler<CreateNewProjectCommand>
 {
     public async Task<ServiceResult> HandleAsync(CreateNewProjectCommand command, CancellationToken cancellationToken = default)
@@ -21,16 +21,11 @@ public sealed class CreateNewProjectCommandHandler(
             return ServiceResult.WithError(ErrorCodes.Project.ProjectNameInvalid);
         }
 
-        var project = new ProjectDomain
-        {
-            CreatedOn = DateTimeOffset.UtcNow,
-            CreatedByUserId = userContext.UserId,
-            IsDeleted = false,
-            Name = command.Name,
-            Url = command.Url,
-            Description = command.Description,
-            OrganizationId = userContext.OrganizationId
-        };
+        var project = ProjectDomain.Create(
+            command.Name,
+            currentUser.OrganizationId,
+            DateTimeOffset.UtcNow,
+            currentUser.UserId);
 
         await dbContext.Projects.AddAsync(project, cancellationToken);
 

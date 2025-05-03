@@ -26,10 +26,9 @@ public sealed class GetAllUsersQueryHandler(IFeedbackHubDbContext feedbackHubDbC
             .Users
             .Include(u => u.ProjectAccess)
             .ThenInclude(pa => pa.Project)
-            .Where(p => p.OrganizationId == query.OrganizationId);
-        //&& (request.projectIds == null 
-        //    || request.projectIds.Contains(p.ProjectAccess.));
-        //TODO: Improve authorization logic
+            .Where(p => p.OrganizationId == query.OrganizationId &&
+                (query.projectIds == null ||
+                 p.ProjectAccess.Any(pa => query.projectIds.Contains(pa.ProjectId))));
 
         var totalCount = await allUsers.CountAsync(cancellationToken);
         var users = await allUsers

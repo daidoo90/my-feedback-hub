@@ -15,7 +15,7 @@ public sealed record CreateNewUserCommand(
 public sealed class CreateNewUserCommandHandler(
     IFeedbackHubDbContext dbContext,
     ICryptoService cryptoService,
-    IUserContext userContext)
+    IUserContext currentUser)
     : ICommandHandler<CreateNewUserCommand>
 {
     public async Task<ServiceResult> HandleAsync(CreateNewUserCommand command, CancellationToken cancellationToken = default)
@@ -31,17 +31,15 @@ public sealed class CreateNewUserCommandHandler(
         }
 
         var hashedPassword = cryptoService.HashPassword(command.Password, out var salt);
-        var newUser = new UserDomain
-        {
-            Username = command.Username,
-            Password = hashedPassword,
-            Salt = Convert.ToBase64String(salt),
-            OrganizationId = command.OrganizationId,
-            Role = command.Role,
-            Status = UserStatusType.Active,
-            CreatedOn = DateTimeOffset.UtcNow,
-            CreatedByUserId = userContext.UserId,
-        };
+        var newUser = UserDomain.Create(
+            command.Username,
+            hashedPassword,
+            Convert.ToBase64String(salt),
+            command.OrganizationId,
+            UserStatusType.Active,
+            command.Role,
+            DateTimeOffset.UtcNow,
+            currentUser.UserId);
 
         if (newUser.Role == UserRoleType.ProjectAdmin
             || newUser.Role == UserRoleType.TeamMember)
