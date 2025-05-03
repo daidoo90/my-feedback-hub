@@ -8,11 +8,12 @@ namespace MyFeedbackHub.Application.Users.Delete;
 public sealed record DeleteUserCommand(Guid UserId);
 
 public sealed class DeleteUserCommandHandler(
-    IFeedbackHubDbContext dbContext,
+    IFeedbackHubDbContextFactory dbContextFactory,
     IUserContext currentUser) : ICommandHandler<DeleteUserCommand>
 {
     public async Task<ServiceResult> HandleAsync(DeleteUserCommand command, CancellationToken cancellationToken = default)
     {
+        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
         var user = await dbContext
             .Users
             .SingleOrDefaultAsync(u => u.UserId == command.UserId

@@ -34,13 +34,13 @@ public sealed class UserDomain
 
     public DateTimeOffset? UpdatedOn { get; private set; }
 
-    public Guid? UpdatedOnByUserId { get; private set; }
+    public Guid? UpdatedByUserId { get; private set; }
 
     public DateTimeOffset? DeletedOn { get; private set; }
 
     public Guid? DeletedByUserId { get; private set; }
 
-    public UserDomain()
+    protected UserDomain()
     { }
 
     public static UserDomain Create(
@@ -59,6 +59,7 @@ public sealed class UserDomain
 
         return new UserDomain
         {
+            UserId = Guid.NewGuid(),
             Username = username,
             Password = password,
             Salt = salt,
@@ -87,6 +88,7 @@ public sealed class UserDomain
 
         return new UserDomain
         {
+            UserId = Guid.NewGuid(),
             Username = username,
             Password = password,
             Salt = salt,
@@ -127,7 +129,7 @@ public sealed class UserDomain
         LastName = lastName;
         PhoneNumber = phoneNumber;
         UpdatedOn = updatedOn;
-        UpdatedOnByUserId = byUserId;
+        UpdatedByUserId = byUserId;
     }
 
     public void Delete(Guid byUserId)

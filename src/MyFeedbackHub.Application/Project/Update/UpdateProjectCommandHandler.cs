@@ -11,12 +11,13 @@ public sealed record UpdateProjectCommand(
     string? Description);
 
 public sealed class UpdateProjectCommandHandler(
-    IFeedbackHubDbContext dbContext,
+    IFeedbackHubDbContextFactory dbContextFactory,
     IUserContext currentUser)
     : ICommandHandler<UpdateProjectCommand>
 {
     public async Task<ServiceResult> HandleAsync(UpdateProjectCommand command, CancellationToken cancellationToken = default)
     {
+        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
         var project = await dbContext
             .Projects
             .SingleOrDefaultAsync(p => p.ProjectId == command.ProjectId

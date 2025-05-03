@@ -9,11 +9,12 @@ public sealed record GetOrganizationByIdQuery(
     Guid OrganizationId);
 
 public sealed class GetOrganizationByIdQueryHandler(
-    IFeedbackHubDbContext feedbackHubDbContext) : IQueryHandler<GetOrganizationByIdQuery, OrganizationDomain?>
+    IFeedbackHubDbContextFactory dbContextFactory) : IQueryHandler<GetOrganizationByIdQuery, OrganizationDomain?>
 {
     public async Task<ServiceDataResult<OrganizationDomain?>> HandleAsync(GetOrganizationByIdQuery query, CancellationToken cancellationToken = default)
     {
-        var project = await feedbackHubDbContext
+        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var project = await dbContext
             .Organizations
             .Include(o => o.Projects)
             .AsNoTracking()

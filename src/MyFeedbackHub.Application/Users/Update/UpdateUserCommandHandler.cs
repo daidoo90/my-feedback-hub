@@ -12,11 +12,12 @@ public sealed record UpdateUserCommand(
     string PhoneNumber);
 
 public sealed class UpdateUserCommandHandler(
-    IFeedbackHubDbContext dbContext,
+    IFeedbackHubDbContextFactory dbContextFactory,
     IUserContext currentUser) : ICommandHandler<UpdateUserCommand>
 {
     public async Task<ServiceResult> HandleAsync(UpdateUserCommand command, CancellationToken cancellationToken = default)
     {
+        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
         var user = await dbContext
             .Users
             .SingleOrDefaultAsync(u => u.UserId == command.UserId, cancellationToken);

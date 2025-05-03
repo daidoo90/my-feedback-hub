@@ -11,3 +11,9 @@ public interface IFeedbackHubDbContext
     DbSet<ProjectAccess> ProjectAccess { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
+
+public interface IFeedbackHubDbContextFactory
+{
+    Task<IFeedbackHubDbContext> CreateAsync(CancellationToken cancellationToken = default);
+}
+

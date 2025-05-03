@@ -3,11 +3,12 @@ using MyFeedbackHub.Application.Shared.Abstractions;
 
 namespace MyFeedbackHub.Infrastructure.Services;
 
-public class UserService(IFeedbackHubDbContext feedbackHubDbContext) : IUserService
+public class UserService(IFeedbackHubDbContextFactory dbContextFactory) : IUserService
 {
     public async Task<IEnumerable<Guid>> GetProjectIdsAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        return await feedbackHubDbContext.ProjectAccess
+        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        return await dbContext.ProjectAccess
             .Where(pa => pa.UserId == userId)
             .Select(pa => pa.ProjectId)
             .ToListAsync(cancellationToken);

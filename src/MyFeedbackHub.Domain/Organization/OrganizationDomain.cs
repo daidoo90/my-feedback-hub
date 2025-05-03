@@ -10,9 +10,9 @@ public sealed class OrganizationDomain
 
     public string? TaxID { get; private set; }
 
-    public ICollection<ProjectDomain> Projects { get; set; } = [];
+    public ICollection<ProjectDomain> Projects { get; private set; } = [];
 
-    public ICollection<UserDomain> Users { get; set; } = [];
+    public ICollection<UserDomain> Users { get; private set; } = [];
 
     public DateTimeOffset CreatedOn { get; private set; }
 
@@ -20,7 +20,7 @@ public sealed class OrganizationDomain
 
     public DateTimeOffset? UpdatedOn { get; private set; }
 
-    public Guid? UpdatedOnByUserId { get; private set; }
+    public Guid? UpdatedByUserId { get; private set; }
 
     public bool IsDeleted { get; private set; }
 
@@ -28,7 +28,7 @@ public sealed class OrganizationDomain
 
     public Guid? DeletedByUserId { get; private set; }
 
-    public OrganizationDomain()
+    protected OrganizationDomain()
     { }
 
     public static OrganizationDomain Create(
@@ -39,6 +39,7 @@ public sealed class OrganizationDomain
 
         return new OrganizationDomain
         {
+            OrganizationId = Guid.NewGuid(),
             Name = name,
             CreatedOn = createdOn
         };
@@ -55,7 +56,7 @@ public sealed class OrganizationDomain
         Name = name;
         TaxID = taxId;
         UpdatedOn = updatedOn;
-        UpdatedOnByUserId = byUserId;
+        UpdatedByUserId = byUserId;
     }
 
     public void SetCreatedBy(Guid userId)

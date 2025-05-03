@@ -27,6 +27,8 @@ public static class ServiceCollectionRegistration
             return dbContextFactory.CreateDbContext();
         });
 
+        services.AddScoped<IFeedbackHubDbContextFactory, FeedbackHubDbContextFactoryAdapter>();
+
         return services;
     }
 }

@@ -7,11 +7,13 @@ namespace MyFeedbackHub.Application.Users.GetByUsername;
 
 public sealed record GetUserByUsernameQuery(string Username);
 
-public class GetUserByUsernameQueryHandler(IFeedbackHubDbContext feedbackHubDbContext) : IQueryHandler<GetUserByUsernameQuery, UserDomain?>
+public class GetUserByUsernameQueryHandler(IFeedbackHubDbContextFactory dbContextFactory)
+    : IQueryHandler<GetUserByUsernameQuery, UserDomain?>
 {
     public async Task<ServiceDataResult<UserDomain?>> HandleAsync(GetUserByUsernameQuery query, CancellationToken cancellationToken = default)
     {
-        var user = await feedbackHubDbContext
+        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var user = await dbContext
             .Users
             .AsNoTracking()
             .SingleOrDefaultAsync(u => u.Username == query.Username, cancellationToken);

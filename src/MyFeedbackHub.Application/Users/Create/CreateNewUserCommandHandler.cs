@@ -13,7 +13,7 @@ public sealed record CreateNewUserCommand(
     Guid? ProjectId);
 
 public sealed class CreateNewUserCommandHandler(
-    IFeedbackHubDbContext dbContext,
+    IFeedbackHubDbContextFactory dbContextFactory,
     ICryptoService cryptoService,
     IUserContext currentUser)
     : ICommandHandler<CreateNewUserCommand>
@@ -51,6 +51,7 @@ public sealed class CreateNewUserCommandHandler(
             });
         }
 
+        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
         await dbContext.Users.AddAsync(newUser, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);

@@ -15,14 +15,16 @@ public sealed record GetAllUsersResponse(
     int TotalCount,
     IEnumerable<UserDomain> Users);
 
-public sealed class GetAllUsersQueryHandler(IFeedbackHubDbContext feedbackHubDbContext) : IQueryHandler<GetAllUsersQuery, GetAllUsersResponse>
+public sealed class GetAllUsersQueryHandler(IFeedbackHubDbContextFactory dbContextFactory)
+    : IQueryHandler<GetAllUsersQuery, GetAllUsersResponse>
 {
     public async Task<ServiceDataResult<GetAllUsersResponse>> HandleAsync(GetAllUsersQuery query, CancellationToken cancellationToken = default)
     {
         var pageNumber = query!.PageNumber.HasValue ? query.PageNumber.Value : 1;
         var pageSize = query!.PageSize.HasValue ? query.PageSize.Value : 10;
 
-        var allUsers = feedbackHubDbContext
+        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var allUsers = dbContext
             .Users
             .Include(u => u.ProjectAccess)
             .ThenInclude(pa => pa.Project)

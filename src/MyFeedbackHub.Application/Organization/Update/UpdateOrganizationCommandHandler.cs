@@ -15,12 +15,13 @@ public sealed record UpdateOrganizationCommand(
     string StreetLine2);
 
 public sealed class UpdateOrganizationCommandHandler(
-    IFeedbackHubDbContext dbContext,
+    IFeedbackHubDbContextFactory dbContextFactory,
     IUserContext currentUser)
     : ICommandHandler<UpdateOrganizationCommand>
 {
     public async Task<ServiceResult> HandleAsync(UpdateOrganizationCommand command, CancellationToken cancellationToken = default)
     {
+        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
         var organization = await dbContext
             .Organizations
             .SingleOrDefaultAsync(o => o.OrganizationId == currentUser.OrganizationId, cancellationToken);

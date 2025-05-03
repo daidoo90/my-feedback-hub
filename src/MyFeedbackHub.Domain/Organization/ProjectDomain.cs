@@ -14,7 +14,7 @@ public sealed class ProjectDomain
 
     public OrganizationDomain Organization { get; private set; } = null!;
 
-    public ICollection<ProjectAccess> ProjectAccess { get; set; } = [];
+    public ICollection<ProjectAccess> ProjectAccess { get; private set; } = [];
 
     public DateTimeOffset CreatedOn { get; private set; }
 
@@ -22,7 +22,7 @@ public sealed class ProjectDomain
 
     public DateTimeOffset? UpdatedOn { get; private set; }
 
-    public Guid? UpdatedOnByUserId { get; private set; }
+    public Guid? UpdatedByUserId { get; private set; }
 
     public bool IsDeleted { get; private set; }
 
@@ -30,7 +30,7 @@ public sealed class ProjectDomain
 
     public Guid? DeletedByUserId { get; private set; }
 
-    public ProjectDomain()
+    protected ProjectDomain()
     { }
 
     public static ProjectDomain Create(
@@ -41,6 +41,7 @@ public sealed class ProjectDomain
     {
         return new ProjectDomain
         {
+            ProjectId = Guid.NewGuid(),
             Name = name,
             OrganizationId = organizationId,
             CreatedOn = createdOn,
@@ -59,6 +60,7 @@ public sealed class ProjectDomain
 
         return new ProjectDomain
         {
+            ProjectId = Guid.NewGuid(),
             Name = name,
             Organization = organization,
             CreatedOn = createdOn,
@@ -81,7 +83,7 @@ public sealed class ProjectDomain
         Url = url;
         Description = description;
         UpdatedOn = updatedOn;
-        UpdatedOnByUserId = byUserId;
+        UpdatedByUserId = byUserId;
     }
 
     public void Delete(Guid byUserId)

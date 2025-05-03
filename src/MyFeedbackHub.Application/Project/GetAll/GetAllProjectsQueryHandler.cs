@@ -16,7 +16,7 @@ public sealed record GetAllProjectsResponse(
     IEnumerable<ProjectDomain> Projects);
 
 public sealed class GetAllProjectsQueryHandler(
-    IFeedbackHubDbContext feedbackHubDbContext,
+    IFeedbackHubDbContextFactory dbContextFactory,
     IUserContext userContext) : IQueryHandler<GetAllProjectsQuery, GetAllProjectsResponse>
 {
     public async Task<ServiceDataResult<GetAllProjectsResponse>> HandleAsync(GetAllProjectsQuery query, CancellationToken cancellationToken = default)
@@ -24,7 +24,8 @@ public sealed class GetAllProjectsQueryHandler(
         var pageNumber = query!.PageNumber.HasValue ? query.PageNumber.Value : 1;
         var pageSize = query!.PageSize.HasValue ? query.PageSize.Value : 10;
 
-        var allProjects = feedbackHubDbContext
+        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var allProjects = dbContext
             .Projects
             .Where(p => p.OrganizationId == userContext.OrganizationId
                         && (!query.ProjectIds.Any() || query.ProjectIds.Contains(p.ProjectId)));

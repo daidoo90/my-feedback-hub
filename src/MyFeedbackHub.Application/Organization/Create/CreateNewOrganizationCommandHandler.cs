@@ -11,7 +11,7 @@ public sealed record CreateNewOrganizationCommand(
     string CompanyName);
 
 public sealed class CreateNewOrganizationCommandHandler(
-    IFeedbackHubDbContext dbContext,
+    IFeedbackHubDbContextFactory dbContextFactory,
     ICryptoService cryptoService)
     : ICommandHandler<CreateNewOrganizationCommand>
 {
@@ -55,6 +55,7 @@ public sealed class CreateNewOrganizationCommandHandler(
 
         organization.SetCreatedBy(user.UserId);
 
+        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
         await dbContext.Organizations.AddAsync(organization, cancellationToken);
         await dbContext.Users.AddAsync(user, cancellationToken);
         await dbContext.Projects.AddAsync(project, cancellationToken);

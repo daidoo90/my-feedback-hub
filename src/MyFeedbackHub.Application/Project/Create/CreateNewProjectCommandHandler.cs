@@ -10,7 +10,7 @@ public sealed record CreateNewProjectCommand(
     string Description);
 
 public sealed class CreateNewProjectCommandHandler(
-    IFeedbackHubDbContext dbContext,
+    IFeedbackHubDbContextFactory dbContextFactory,
     IUserContext currentUser)
     : ICommandHandler<CreateNewProjectCommand>
 {
@@ -27,6 +27,7 @@ public sealed class CreateNewProjectCommandHandler(
             DateTimeOffset.UtcNow,
             currentUser.UserId);
 
+        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
         await dbContext.Projects.AddAsync(project, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);

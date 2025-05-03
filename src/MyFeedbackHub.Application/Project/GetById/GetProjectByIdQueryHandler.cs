@@ -7,11 +7,13 @@ namespace MyFeedbackHub.Application.Project.GetById;
 
 public sealed record GetProjectByIdQuery(Guid ProjectId);
 
-public sealed class GetProjectByIdQueryHandler(IFeedbackHubDbContext feedbackHubDbContext) : IQueryHandler<GetProjectByIdQuery, ProjectDomain?>
+public sealed class GetProjectByIdQueryHandler(IFeedbackHubDbContextFactory dbContextFactory)
+    : IQueryHandler<GetProjectByIdQuery, ProjectDomain?>
 {
     public async Task<ServiceDataResult<ProjectDomain?>> HandleAsync(GetProjectByIdQuery query, CancellationToken cancellationToken = default)
     {
-        var project = await feedbackHubDbContext
+        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var project = await dbContext
             .Projects
             .AsNoTracking()
             .SingleOrDefaultAsync(p => p.ProjectId == query.ProjectId, cancellationToken);
