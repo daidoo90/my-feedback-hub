@@ -1,19 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Domain;
+using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.SharedKernel.Results;
 
 namespace MyFeedbackHub.Application.Project.GetById;
 
-public sealed record GetProjectByIdQueryRequest(Guid ProjectId);
+public sealed record GetProjectByIdQuery(Guid ProjectId);
 
-public sealed class GetProjectByIdQueryHandler(IFeedbackHubDbContext feedbackHubDbContext) : IQueryHandler<GetProjectByIdQueryRequest, ProjectDomain?>
+public sealed class GetProjectByIdQueryHandler(IFeedbackHubDbContext feedbackHubDbContext) : IQueryHandler<GetProjectByIdQuery, ProjectDomain?>
 {
-    public async Task<ServiceDataResult<ProjectDomain?>> HandleAsync(GetProjectByIdQueryRequest request, CancellationToken cancellationToken = default)
+    public async Task<ServiceDataResult<ProjectDomain?>> HandleAsync(GetProjectByIdQuery query, CancellationToken cancellationToken = default)
     {
         var project = await feedbackHubDbContext
             .Projects
-            .SingleOrDefaultAsync(p => p.ProjectId == request.ProjectId, cancellationToken);
+            .AsNoTracking()
+            .SingleOrDefaultAsync(p => p.ProjectId == query.ProjectId, cancellationToken);
 
         return ServiceDataResult<ProjectDomain?>.WithData(project);
     }

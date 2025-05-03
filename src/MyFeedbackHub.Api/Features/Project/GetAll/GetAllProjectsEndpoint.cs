@@ -3,6 +3,7 @@ using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Project.GetAll;
 using MyFeedbackHub.Application.Shared.Abstractions;
+using MyFeedbackHub.Domain.Types;
 
 namespace MyFeedbackHub.Api.Features.Project.GetAll;
 
@@ -32,11 +33,21 @@ public sealed class GetAllProjectsEndpoint : ICarterModule
         app.MapGet("/projects", async (
             int? pageNumber,
             int? pageSize,
-            IQueryHandler<GetAllProjectsQueryRequest, GetAllProjectsResponse> handler,
-            IUserContext userContext,
+            IQueryHandler<GetAllProjectsQuery, GetAllProjectsResponse> queryHandler,
+            IUserContext currentUser,
+            IUserService userService,
             CancellationToken cancellationToken) =>
         {
-            var result = await handler.HandleAsync(new GetAllProjectsQueryRequest(pageNumber, pageSize), cancellationToken);
+            if (currentUser.Role == UserRoleType.Customer)
+            {
+                return Results.Forbid();
+            }
+
+            var projectIds = currentUser.Role == UserRoleType.OrganizationAdmin
+                            ? []
+                            : await userService.GetProjectIdsAsync(currentUser.UserId, cancellationToken);
+
+            var result = await queryHandler.HandleAsync(new GetAllProjectsQuery(pageNumber, pageSize, currentUser.OrganizationId, projectIds), cancellationToken);
 
             if (result.HasFailed)
             {

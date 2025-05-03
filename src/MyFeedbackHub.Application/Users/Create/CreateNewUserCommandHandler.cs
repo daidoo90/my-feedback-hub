@@ -1,5 +1,5 @@
 ﻿using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Domain;
+using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
 
@@ -9,7 +9,8 @@ public sealed record CreateNewUserCommand(
     string Username,
     string Password,
     Guid OrganizationId,
-    UserRoleType Role);
+    UserRoleType Role,
+    Guid? ProjectId);
 
 public sealed class CreateNewUserCommandHandler(
     IFeedbackHubDbContext dbContext,
@@ -30,8 +31,7 @@ public sealed class CreateNewUserCommandHandler(
         }
 
         var hashedPassword = cryptoService.HashPassword(command.Password, out var salt);
-
-        await dbContext.Users.AddAsync(new UserDomain
+        var newUser = new UserDomain
         {
             Username = command.Username,
             Password = hashedPassword,
@@ -41,7 +41,19 @@ public sealed class CreateNewUserCommandHandler(
             Status = UserStatusType.Active,
             CreatedOn = DateTimeOffset.UtcNow,
             CreatedByUserId = userContext.UserId,
-        }, cancellationToken);
+        };
+
+        if (newUser.Role == UserRoleType.ProjectAdmin
+            || newUser.Role == UserRoleType.TeamMember)
+        {
+            newUser.ProjectAccess.Add(new ProjectAccess
+            {
+                UserId = newUser.UserId,
+                ProjectId = command.ProjectId.Value
+            });
+        }
+
+        await dbContext.Users.AddAsync(newUser, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

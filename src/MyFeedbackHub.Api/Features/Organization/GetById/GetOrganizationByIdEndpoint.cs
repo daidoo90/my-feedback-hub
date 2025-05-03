@@ -3,7 +3,8 @@ using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Organization.GetById;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Domain;
+using MyFeedbackHub.Domain.Organization;
+using MyFeedbackHub.Domain.Types;
 
 namespace MyFeedbackHub.Api.Features.Organization.GetById;
 
@@ -36,11 +37,16 @@ public sealed class GetOrganizationByIdEndpoint : ICarterModule
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapGet("/organizations", async (
-            IQueryHandler<GetOrganizationByIdQueryRequest, OrganizationDomain?> handler,
-            IUserContext userContext,
+            IQueryHandler<GetOrganizationByIdQuery, OrganizationDomain?> queryHandler,
+            IUserContext currentUser,
             CancellationToken cancellationToken) =>
         {
-            var result = await handler.HandleAsync(new GetOrganizationByIdQueryRequest(userContext.OrganizationId), cancellationToken);
+            if (currentUser.Role != UserRoleType.OrganizationAdmin)
+            {
+                return Results.Forbid();
+            }
+
+            var result = await queryHandler.HandleAsync(new GetOrganizationByIdQuery(currentUser.OrganizationId), cancellationToken);
 
             if (result.HasFailed)
             {

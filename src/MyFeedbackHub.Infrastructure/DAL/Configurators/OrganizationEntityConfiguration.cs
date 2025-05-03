@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
-using MyFeedbackHub.Domain;
+using MyFeedbackHub.Domain.Organization;
 
 namespace MyFeedbackHub.Infrastructure.DAL.Configurators;
 

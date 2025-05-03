@@ -1,4 +1,4 @@
-﻿using MyFeedbackHub.Domain;
+﻿using MyFeedbackHub.Domain.Organization;
 
 namespace MyFeedbackHub.Api.Services.Abstraction;
 

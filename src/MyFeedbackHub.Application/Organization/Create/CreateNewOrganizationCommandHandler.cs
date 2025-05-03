@@ -1,5 +1,5 @@
 ﻿using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Domain;
+using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
 

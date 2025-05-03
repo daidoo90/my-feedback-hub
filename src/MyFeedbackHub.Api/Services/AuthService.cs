@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MyFeedbackHub.Api.Services.Abstraction;
-using MyFeedbackHub.Domain;
+using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.SharedKernel.Configurations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

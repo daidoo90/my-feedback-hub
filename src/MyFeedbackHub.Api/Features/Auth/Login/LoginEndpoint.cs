@@ -3,7 +3,7 @@ using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Application.Users.GetByUsername;
-using MyFeedbackHub.Domain;
+using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
 
@@ -24,10 +24,10 @@ public sealed class LoginEndpoint : ICarterModule
         app.MapPost("/auth/login", async (
             LoginRequestDto request,
             IAuthService authService,
-            IQueryHandler<GetUserByUsernameRequest, UserDomain> queryHandler,
+            IQueryHandler<GetUserByUsernameQuery, UserDomain> queryHandler,
             ICryptoService cryptoService) =>
         {
-            var handlerResult = await queryHandler.HandleAsync(new GetUserByUsernameRequest(request.Username));
+            var handlerResult = await queryHandler.HandleAsync(new GetUserByUsernameQuery(request.Username));
             if (handlerResult.HasFailed
                 || handlerResult.Data == null
                 || handlerResult.Data.Status != UserStatusType.Active)

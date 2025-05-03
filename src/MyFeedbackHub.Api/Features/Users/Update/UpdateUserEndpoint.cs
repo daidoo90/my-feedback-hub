@@ -20,25 +20,39 @@ public sealed class UpdateUserEndpoint : ICarterModule
         app.MapPatch("/users/{id}", async (
             Guid id,
             [FromBody] UpdateUserRequestDto request,
-            ICommandHandler<UpdateUserCommand> command,
-            IUserContext userContext) =>
+            ICommandHandler<UpdateUserCommand> commandHandler,
+            IUserContext currentUser,
+            IUserService userService,
+            CancellationToken cancellationToken) =>
         {
-            if (userContext.Role == UserRoleType.Customer)
+            if (currentUser.Role == UserRoleType.Customer)
             {
                 return Results.Forbid();
             }
 
-            if (userContext.Role == UserRoleType.TeamMember
-                && userContext.UserId != id)
+            if (currentUser.Role == UserRoleType.TeamMember && currentUser.UserId != id)
             {
                 return Results.Forbid();
             }
 
-            var result = await command.HandleAsync(new UpdateUserCommand(id,
+            if (currentUser.Role == UserRoleType.ProjectAdmin)
+            {
+                var currentUserProjectIds = await userService.GetProjectIdsAsync(currentUser.UserId, cancellationToken);
+                var updatedUserProjectIds = await userService.GetProjectIdsAsync(id, cancellationToken);
+
+                if (!updatedUserProjectIds.Any(p => currentUserProjectIds.Contains(p)))
+                {
+                    return Results.Forbid();
+                }
+            }
+
+            var result = await commandHandler.HandleAsync(new UpdateUserCommand(id,
                 request.FirstName,
                 request.LastName,
                 request.Email,
-                request.PhoneNumber));
+                request.PhoneNumber),
+                cancellationToken);
+
             if (result.HasFailed)
             {
                 return result.ToBadRequest("User update failure");

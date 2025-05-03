@@ -9,7 +9,8 @@ namespace MyFeedbackHub.Api.Features.Users.Create;
 public sealed record CreateNewUserRequestDto(
     string Username,
     string Password,
-    UserRoleType Role);
+    UserRoleType Role,
+    Guid? ProjectId);
 
 public sealed class CreateNewUserEndpoint : ICarterModule
 {
@@ -17,16 +18,33 @@ public sealed class CreateNewUserEndpoint : ICarterModule
     {
         app.MapPost("/users", async (
             CreateNewUserRequestDto request,
-            ICommandHandler<CreateNewUserCommand> command,
-            IUserContext userContext,
+            ICommandHandler<CreateNewUserCommand> commandHandler,
+            IUserContext currentUser,
+            IUserService userService,
             CancellationToken cancellationToken = default) =>
         {
-            var result = await command.HandleAsync(
+            if (currentUser.Role == UserRoleType.TeamMember
+                || currentUser.Role == UserRoleType.Customer)
+            {
+                return Results.Forbid();
+            }
+
+            if (currentUser.Role == UserRoleType.ProjectAdmin)
+            {
+                var currentUserProjectIds = await userService.GetProjectIdsAsync(currentUser.UserId, cancellationToken);
+                if (request.ProjectId.HasValue && !currentUserProjectIds.Contains(request.ProjectId.Value))
+                {
+                    return Results.Forbid();
+                }
+            }
+
+            var result = await commandHandler.HandleAsync(
                 new CreateNewUserCommand(
                     request.Username,
                     request.Password,
-                    userContext.OrganizationId,
-                    userContext.Role),
+                    currentUser.OrganizationId,
+                    request.Role,
+                    request.ProjectId),
                 cancellationToken);
 
             if (result.HasFailed)

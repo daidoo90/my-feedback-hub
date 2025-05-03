@@ -1,4 +1,4 @@
-﻿namespace MyFeedbackHub.Domain;
+﻿namespace MyFeedbackHub.Domain.Organization;
 
 public sealed class ProjectDomain
 {
@@ -13,6 +13,8 @@ public sealed class ProjectDomain
     public Guid OrganizationId { get; set; }
 
     public OrganizationDomain Organization { get; set; } = null!;
+
+    public ICollection<ProjectAccess> ProjectAccess { get; set; } = [];
 
     public DateTimeOffset CreatedOn { get; set; }
 

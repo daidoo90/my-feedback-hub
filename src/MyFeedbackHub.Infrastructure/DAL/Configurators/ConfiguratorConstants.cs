@@ -9,6 +9,7 @@ internal class ConfiguratorConstants
             internal static string Organization = "Organization";
             internal static string User = "User";
             internal static string Project = "Project";
+            internal static string ProjectAccess = "ProjectAccess";
         }
 
         internal static class Feedback

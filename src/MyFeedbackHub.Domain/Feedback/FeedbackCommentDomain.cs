@@ -1,4 +1,6 @@
-﻿namespace MyFeedbackHub.Domain;
+﻿using MyFeedbackHub.Domain.Organization;
+
+namespace MyFeedbackHub.Domain.Feedback;
 
 public sealed class FeedbackCommentDomain
 {

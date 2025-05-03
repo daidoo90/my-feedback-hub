@@ -3,13 +3,14 @@ using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Project.Update;
 using MyFeedbackHub.Application.Shared.Abstractions;
+using MyFeedbackHub.Domain.Types;
 
 namespace MyFeedbackHub.Api.Features.Project.Update;
 
 public sealed record UpdateProjectRequestDto(
-    string Name,
-    string Url,
-    string Description);
+    string? Name,
+    string? Url,
+    string? Description);
 
 public sealed class UpdateProjectEndpoint : ICarterModule
 {
@@ -18,10 +19,27 @@ public sealed class UpdateProjectEndpoint : ICarterModule
         app.MapPatch("/projects/{id}", async (
             Guid id,
             [FromBody] UpdateProjectRequestDto request,
-            ICommandHandler<UpdateProjectCommand> handler,
+            ICommandHandler<UpdateProjectCommand> queryHandler,
+            IUserContext currentUser,
+            IUserService userService,
             CancellationToken cancellationToken) =>
         {
-            var result = await handler.HandleAsync(new UpdateProjectCommand(
+            if (currentUser.Role == UserRoleType.TeamMember
+                || currentUser.Role == UserRoleType.Customer)
+            {
+                return Results.Forbid();
+            }
+
+            if (currentUser.Role == UserRoleType.ProjectAdmin)
+            {
+                var currentUserProjectIds = await userService.GetProjectIdsAsync(currentUser.UserId, cancellationToken);
+                if (!currentUserProjectIds.Contains(id))
+                {
+                    return Results.Forbid();
+                }
+            }
+
+            var result = await queryHandler.HandleAsync(new UpdateProjectCommand(
                 id,
                 request.Name,
                 request.Url,

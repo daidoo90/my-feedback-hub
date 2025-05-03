@@ -2,13 +2,14 @@
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Project.GetById;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Domain;
+using MyFeedbackHub.Domain.Organization;
+using MyFeedbackHub.Domain.Types;
 
 namespace MyFeedbackHub.Api.Features.Project.GetById;
 
 public sealed class ProjectResponseDto
 {
-    public Guid UserId { get; init; }
+    public Guid ProjectId { get; init; }
     public string Name { get; init; }
     public string Url { get; init; }
     public string Description { get; init; }
@@ -22,7 +23,7 @@ public sealed class ProjectResponseDto
 
         return new ProjectResponseDto
         {
-            UserId = projectDomain!.ProjectId,
+            ProjectId = projectDomain!.ProjectId,
             Name = projectDomain!.Name,
             Url = projectDomain!.Url,
             Description = projectDomain!.Description
@@ -36,11 +37,27 @@ public sealed class GetProjectByIdEndpoint : ICarterModule
     {
         app.MapGet("/projects/{id}", async (
             Guid id,
-            IQueryHandler<GetProjectByIdQueryRequest, ProjectDomain?> handler,
-            IUserContext userContext,
+            IQueryHandler<GetProjectByIdQuery, ProjectDomain?> queryHandler,
+            IUserService userService,
+            IUserContext currentUser,
             CancellationToken cancellationToken) =>
         {
-            var result = await handler.HandleAsync(new GetProjectByIdQueryRequest(id), cancellationToken);
+            if (currentUser.Role == UserRoleType.TeamMember
+                || currentUser.Role == UserRoleType.Customer)
+            {
+                return Results.Forbid();
+            }
+
+            if (currentUser.Role == UserRoleType.ProjectAdmin)
+            {
+                var currentUserProjectIds = await userService.GetProjectIdsAsync(currentUser.UserId, cancellationToken);
+                if (!currentUserProjectIds.Contains(id))
+                {
+                    return Results.Forbid();
+                }
+            }
+
+            var result = await queryHandler.HandleAsync(new GetProjectByIdQuery(id), cancellationToken);
 
             if (result.HasFailed)
             {
@@ -48,7 +65,7 @@ public sealed class GetProjectByIdEndpoint : ICarterModule
             }
 
             if (result.Data != null
-                && userContext.OrganizationId != result.Data!.OrganizationId)
+                && currentUser.OrganizationId != result.Data!.OrganizationId)
             {
                 return Results.Forbid();
             }

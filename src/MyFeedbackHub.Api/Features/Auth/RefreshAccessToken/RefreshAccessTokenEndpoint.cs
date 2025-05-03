@@ -3,7 +3,7 @@ using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Application.Users.GetByUsername;
-using MyFeedbackHub.Domain;
+using MyFeedbackHub.Domain.Organization;
 
 namespace MyFeedbackHub.Api.Features.Auth.RefreshAccessToken;
 
@@ -18,7 +18,7 @@ public sealed class RefreshAccessTokenEndpoint : ICarterModule
         app.MapPost("/auth/refresh", async (
             RefreshAccessTokenRequest request,
             IAuthService authService,
-            IQueryHandler<GetUserByUsernameRequest, UserDomain> getUserByIdHandler,
+            IQueryHandler<GetUserByUsernameQuery, UserDomain> getUserByIdHandler,
             IUserContext userContext,
             CancellationToken cancellation) =>
         {
@@ -27,7 +27,7 @@ public sealed class RefreshAccessTokenEndpoint : ICarterModule
                 return Results.BadRequest(nameof(request.RefreshToken));
             }
 
-            var handlerResult = await getUserByIdHandler.HandleAsync(new GetUserByUsernameRequest(username), cancellation);
+            var handlerResult = await getUserByIdHandler.HandleAsync(new GetUserByUsernameQuery(username), cancellation);
             if (handlerResult.HasFailed
                 || handlerResult.Data == null
                 || handlerResult.Data.UserId != userContext.UserId

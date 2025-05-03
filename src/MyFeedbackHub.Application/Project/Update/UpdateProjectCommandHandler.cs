@@ -6,9 +6,9 @@ namespace MyFeedbackHub.Application.Project.Update;
 
 public sealed record UpdateProjectCommand(
     Guid ProjectId,
-    string Name,
-    string Url,
-    string Description);
+    string? Name,
+    string? Url,
+    string? Description);
 
 public sealed class UpdateProjectCommandHandler(
     IFeedbackHubDbContext dbContext,
@@ -28,9 +28,9 @@ public sealed class UpdateProjectCommandHandler(
             return ServiceResult.WithError(ErrorCodes.Project.ProjectInvalid);
         }
 
-        project.Name = command.Name;
-        project.Url = command.Url;
-        project.Description = command.Description;
+        project.Name = !string.IsNullOrEmpty(command.Name) ? command.Name : project.Name;
+        project.Url = !string.IsNullOrEmpty(command.Url) ? command.Url : project.Url;
+        project.Description = !string.IsNullOrEmpty(command.Description) ? command.Description : project.Description;
         project.UpdatedOn = DateTimeOffset.UtcNow;
         project.UpdatedOnByUserId = userContext.UserId;
 

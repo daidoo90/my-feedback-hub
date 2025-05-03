@@ -1,6 +1,6 @@
 ﻿using MyFeedbackHub.Domain.Types;
 
-namespace MyFeedbackHub.Domain;
+namespace MyFeedbackHub.Domain.Organization;
 
 public sealed class UserDomain
 {
@@ -26,6 +26,8 @@ public sealed class UserDomain
 
     public OrganizationDomain Organization { get; set; } = null!;
 
+    public ICollection<ProjectAccess> ProjectAccess { get; set; } = [];
+
     public DateTimeOffset CreatedOn { get; set; }
 
     public Guid? CreatedByUserId { get; set; }
@@ -37,4 +39,5 @@ public sealed class UserDomain
     public DateTimeOffset? DeletedOn { get; set; }
 
     public Guid? DeletedByUserId { get; set; }
+
 }

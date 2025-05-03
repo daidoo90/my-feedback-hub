@@ -3,6 +3,7 @@ using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Organization.Update;
 using MyFeedbackHub.Application.Shared.Abstractions;
+using MyFeedbackHub.Domain.Types;
 
 namespace MyFeedbackHub.Api.Features.Organization.Update;
 
@@ -23,10 +24,16 @@ public sealed class UpdateOrganizationEndpoint : ICarterModule
     {
         app.MapPatch("/organizations", async (
             [FromBody] UpdateOrganizationRequestDto request,
-            ICommandHandler<UpdateOrganizationCommand> handler,
+            IUserContext currentUser,
+            ICommandHandler<UpdateOrganizationCommand> queryHandler,
             CancellationToken cancellationToken) =>
         {
-            var result = await handler.HandleAsync(new UpdateOrganizationCommand(
+            if (currentUser.Role != UserRoleType.OrganizationAdmin)
+            {
+                return Results.Forbid();
+            }
+
+            var result = await queryHandler.HandleAsync(new UpdateOrganizationCommand(
                 request.Name,
                 request.TaxId,
                 request.Country,

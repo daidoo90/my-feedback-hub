@@ -14,7 +14,8 @@ using MyFeedbackHub.Application.Users.GetAll;
 using MyFeedbackHub.Application.Users.GetById;
 using MyFeedbackHub.Application.Users.GetByUsername;
 using MyFeedbackHub.Application.Users.Update;
-using MyFeedbackHub.Domain;
+using MyFeedbackHub.Domain.Organization;
+using MyFeedbackHub.Infrastructure.Services;
 
 namespace MyFeedbackHub.Api.Shared.Registration;
 
@@ -24,20 +25,22 @@ internal static class ApplicationDomain
     {
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ICommandHandler<CreateNewOrganizationCommand>, CreateNewOrganizationCommandHandler>();
-        services.AddScoped<IQueryHandler<GetOrganizationByIdQueryRequest, OrganizationDomain?>, GetOrganizationByIdQueryHandler>();
+        services.AddScoped<IQueryHandler<GetOrganizationByIdQuery, OrganizationDomain?>, GetOrganizationByIdQueryHandler>();
         services.AddScoped<ICommandHandler<UpdateOrganizationCommand>, UpdateOrganizationCommandHandler>();
 
-        services.AddScoped<IQueryHandler<GetByUserIdQueryRequest, UserDomain?>, GetByUserIdQueryHandler>();
-        services.AddScoped<IQueryHandler<GetUserByUsernameRequest, UserDomain?>, GetUserByUsernameQueryHandler>();
-        services.AddScoped<IQueryHandler<GetAllUsersQueryRequest, GetAllUsersResponse>, GetAllUsersQueryHandler>();
+        services.AddScoped<IQueryHandler<GetByUserIdQuery, UserDomain?>, GetByUserIdQueryHandler>();
+        services.AddScoped<IQueryHandler<GetUserByUsernameQuery, UserDomain?>, GetUserByUsernameQueryHandler>();
+        services.AddScoped<IQueryHandler<GetAllUsersQuery, GetAllUsersResponse>, GetAllUsersQueryHandler>();
         services.AddScoped<ICommandHandler<CreateNewUserCommand>, CreateNewUserCommandHandler>();
         services.AddScoped<ICommandHandler<DeleteUserCommand>, DeleteUserCommandHandler>();
         services.AddScoped<ICommandHandler<UpdateUserCommand>, UpdateUserCommandHandler>();
 
         services.AddScoped<ICommandHandler<CreateNewProjectCommand>, CreateNewProjectCommandHandler>();
         services.AddScoped<ICommandHandler<UpdateProjectCommand>, UpdateProjectCommandHandler>();
-        services.AddScoped<IQueryHandler<GetProjectByIdQueryRequest, ProjectDomain?>, GetProjectByIdQueryHandler>();
-        services.AddScoped<IQueryHandler<GetAllProjectsQueryRequest, GetAllProjectsResponse>, GetAllProjectsQueryHandler>();
+        services.AddScoped<IQueryHandler<GetProjectByIdQuery, ProjectDomain?>, GetProjectByIdQueryHandler>();
+        services.AddScoped<IQueryHandler<GetAllProjectsQuery, GetAllProjectsResponse>, GetAllProjectsQueryHandler>();
+
+        services.AddScoped<IUserService, UserService>();
 
         return services;
     }

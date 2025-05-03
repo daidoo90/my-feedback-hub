@@ -1,13 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Domain;
+using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.SharedKernel.Results;
 
 namespace MyFeedbackHub.Application.Project.GetAll;
 
-public sealed record GetAllProjectsQueryRequest(
+public sealed record GetAllProjectsQuery(
     int? PageNumber,
-    int? PageSize);
+    int? PageSize,
+    Guid OrganizationId,
+    IEnumerable<Guid> ProjectIds);
 
 public sealed record GetAllProjectsResponse(
     int TotalCount,
@@ -15,21 +17,23 @@ public sealed record GetAllProjectsResponse(
 
 public sealed class GetAllProjectsQueryHandler(
     IFeedbackHubDbContext feedbackHubDbContext,
-    IUserContext userContext) : IQueryHandler<GetAllProjectsQueryRequest, GetAllProjectsResponse>
+    IUserContext userContext) : IQueryHandler<GetAllProjectsQuery, GetAllProjectsResponse>
 {
-    public async Task<ServiceDataResult<GetAllProjectsResponse>> HandleAsync(GetAllProjectsQueryRequest request, CancellationToken cancellationToken = default)
+    public async Task<ServiceDataResult<GetAllProjectsResponse>> HandleAsync(GetAllProjectsQuery query, CancellationToken cancellationToken = default)
     {
-        var pageNumber = request!.PageNumber.HasValue ? request.PageNumber.Value : 1;
-        var pageSize = request!.PageSize.HasValue ? request.PageSize.Value : 10;
+        var pageNumber = query!.PageNumber.HasValue ? query.PageNumber.Value : 1;
+        var pageSize = query!.PageSize.HasValue ? query.PageSize.Value : 10;
 
         var allProjects = feedbackHubDbContext
             .Projects
-            .Where(p => p.OrganizationId == userContext.OrganizationId);
+            .Where(p => p.OrganizationId == userContext.OrganizationId
+                        && (!query.ProjectIds.Any() || query.ProjectIds.Contains(p.ProjectId)));
 
         var totalCount = await allProjects.CountAsync(cancellationToken);
         var projects = await allProjects
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
 
         return ServiceDataResult<GetAllProjectsResponse>.WithData(new GetAllProjectsResponse(totalCount, projects));

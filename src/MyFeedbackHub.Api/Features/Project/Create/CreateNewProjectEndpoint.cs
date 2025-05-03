@@ -3,6 +3,7 @@ using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Project.Create;
 using MyFeedbackHub.Application.Shared.Abstractions;
+using MyFeedbackHub.Domain.Types;
 
 namespace MyFeedbackHub.Api.Features.Project.Create;
 
@@ -17,10 +18,16 @@ public sealed class CreateNewProjectEndpoint : ICarterModule
     {
         app.MapPost("/projects", async (
             [FromBody] CreateNewProjectRequestDto request,
-            ICommandHandler<CreateNewProjectCommand> handler,
+            ICommandHandler<CreateNewProjectCommand> queryHandler,
+            IUserContext currentUser,
             CancellationToken cancellationToken) =>
         {
-            var result = await handler.HandleAsync(new CreateNewProjectCommand(
+            if (currentUser.Role != UserRoleType.OrganizationAdmin)
+            {
+                return Results.Forbid();
+            }
+
+            var result = await queryHandler.HandleAsync(new CreateNewProjectCommand(
                 request.Name,
                 request.Url,
                 request.Description),

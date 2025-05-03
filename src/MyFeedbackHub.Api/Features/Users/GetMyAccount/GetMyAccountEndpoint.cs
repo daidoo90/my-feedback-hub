@@ -2,7 +2,7 @@
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Application.Users.GetById;
-using MyFeedbackHub.Domain;
+using MyFeedbackHub.Domain.Organization;
 
 namespace MyFeedbackHub.Api.Features.Users.GetMyAccount;
 
@@ -11,11 +11,11 @@ public sealed class GetMyAccountEndpoint : ICarterModule
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapGet("/users/me", async (
-             IQueryHandler<GetByUserIdQueryRequest, UserDomain?> handler,
+             IQueryHandler<GetByUserIdQuery, UserDomain?> handler,
              IUserContext userContext,
              CancellationToken cancellationToken) =>
         {
-            var result = await handler.HandleAsync(new GetByUserIdQueryRequest(userContext.UserId), cancellationToken);
+            var result = await handler.HandleAsync(new GetByUserIdQuery(userContext.UserId), cancellationToken);
 
             return Results.Ok(UserResponseDto.From(result.Data));
         })

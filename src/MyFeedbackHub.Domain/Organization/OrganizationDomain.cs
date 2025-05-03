@@ -1,4 +1,4 @@
-﻿namespace MyFeedbackHub.Domain;
+﻿namespace MyFeedbackHub.Domain.Organization;
 
 public sealed class OrganizationDomain
 {
