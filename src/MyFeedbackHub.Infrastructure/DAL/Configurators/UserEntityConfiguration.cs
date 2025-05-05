@@ -5,11 +5,11 @@ using MyFeedbackHub.Domain.Organization;
 
 namespace MyFeedbackHub.Infrastructure.DAL.Configurators;
 
-public class UserEntityConfiguration : IEntityTypeConfiguration<UserDomain>, IEntityConfiguration
+public sealed class UserEntityConfiguration : IEntityTypeConfiguration<UserDomain>, IEntityConfiguration
 {
     public void Configure(EntityTypeBuilder<UserDomain> builder)
     {
-        builder.ToTable(ConfiguratorConstants.Schemas.Public.User, ConfiguratorConstants.Schemas.Public.Name);
+        builder.ToTable(ConfiguratorConstants.Tables.User, ConfiguratorConstants.Schemas.Public);
         builder
             .HasKey(u => u.UserId);
 

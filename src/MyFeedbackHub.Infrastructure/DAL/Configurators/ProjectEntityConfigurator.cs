@@ -5,11 +5,11 @@ using MyFeedbackHub.Domain.Organization;
 
 namespace MyFeedbackHub.Infrastructure.DAL.Configurators;
 
-public class ProjectEntityConfigurator : IEntityTypeConfiguration<ProjectDomain>, IEntityConfiguration
+public sealed class ProjectEntityConfigurator : IEntityTypeConfiguration<ProjectDomain>, IEntityConfiguration
 {
     public void Configure(EntityTypeBuilder<ProjectDomain> builder)
     {
-        builder.ToTable(ConfiguratorConstants.Schemas.Public.Project, ConfiguratorConstants.Schemas.Public.Name);
+        builder.ToTable(ConfiguratorConstants.Tables.Project, ConfiguratorConstants.Schemas.Public);
         builder
             .HasKey(b => b.ProjectId);
 

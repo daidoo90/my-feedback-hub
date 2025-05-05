@@ -20,4 +20,9 @@ public sealed class ErrorCodes
     {
         public const string OrganizationInvalid = "organization_invalid";
     }
+
+    public sealed class Feedback
+    {
+        public const string FeedbackInvalid = "feedback_invalid";
+    }
 }

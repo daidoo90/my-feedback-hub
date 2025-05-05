@@ -8,7 +8,7 @@ public sealed class ProjectAccessConfiguration : IEntityTypeConfiguration<Projec
 {
     public void Configure(EntityTypeBuilder<ProjectAccess> builder)
     {
-        builder.ToTable(ConfiguratorConstants.Schemas.Public.ProjectAccess, ConfiguratorConstants.Schemas.Public.Name);
+        builder.ToTable(ConfiguratorConstants.Tables.ProjectAccess, ConfiguratorConstants.Schemas.Public);
 
         builder.HasKey(up => new { up.UserId, up.ProjectId });
 

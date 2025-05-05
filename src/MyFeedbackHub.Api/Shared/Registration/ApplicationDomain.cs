@@ -1,5 +1,7 @@
 ﻿using MyFeedbackHub.Api.Services;
 using MyFeedbackHub.Api.Services.Abstraction;
+using MyFeedbackHub.Application.Feedback.Create;
+using MyFeedbackHub.Application.Feedback.Update;
 using MyFeedbackHub.Application.Organization.Create;
 using MyFeedbackHub.Application.Organization.GetById;
 using MyFeedbackHub.Application.Organization.Update;
@@ -40,6 +42,9 @@ internal static class ApplicationDomain
         services.AddScoped<ICommandHandler<UpdateProjectCommand>, UpdateProjectCommandHandler>();
         services.AddScoped<IQueryHandler<GetProjectByIdQuery, ProjectDomain?>, GetProjectByIdQueryHandler>();
         services.AddScoped<IQueryHandler<GetAllProjectsQuery, GetAllProjectsResponse>, GetAllProjectsQueryHandler>();
+
+        services.AddScoped<ICommandHandler<CreateNewFeedbackCommand>, CreateNewFeedbackCommandHandler>();
+        services.AddScoped<ICommandHandler<UpdateFeedbackCommand>, UpdateFeedbackCommandHandler>();
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserInvitationService, UserInvitationService>();

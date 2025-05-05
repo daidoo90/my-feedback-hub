@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyFeedbackHub.Application.Shared.Abstractions;
+using MyFeedbackHub.Domain.Feedback;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Infrastructure.DAL.Configurators;
 
@@ -20,6 +21,7 @@ public class FeedbackHubDbContext : DbContext, IFeedbackHubDbContext
     public DbSet<ProjectDomain> Projects { get; set; }
     public DbSet<UserDomain> Users { get; set; }
     public DbSet<ProjectAccess> ProjectAccess { get; set; }
+    public DbSet<FeedbackDomain> Feedbacks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
