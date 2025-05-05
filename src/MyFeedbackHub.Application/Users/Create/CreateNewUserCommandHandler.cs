@@ -7,36 +7,29 @@ namespace MyFeedbackHub.Application.Users.Create;
 
 public sealed record CreateNewUserCommand(
     string Username,
-    string Password,
     Guid OrganizationId,
     UserRoleType Role,
     Guid? ProjectId);
 
+public sealed record CreateNewUserCommandResult(string InvitationToken);
+
 public sealed class CreateNewUserCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
-    ICryptoService cryptoService,
-    IUserContext currentUser)
-    : ICommandHandler<CreateNewUserCommand>
+    IUserContext currentUser,
+    IUserService userService)
+    : ICommandHandler<CreateNewUserCommand, CreateNewUserCommandResult>
 {
-    public async Task<ServiceResult> HandleAsync(CreateNewUserCommand command, CancellationToken cancellationToken = default)
+    public async Task<ServiceDataResult<CreateNewUserCommandResult>> HandleAsync(CreateNewUserCommand command, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(command.Username))
         {
-            return ServiceResult.WithError(ErrorCodes.User.UsernameInvalid);
+            return ServiceDataResult<CreateNewUserCommandResult>.WithError(ErrorCodes.User.UsernameInvalid);
         }
 
-        if (string.IsNullOrEmpty(command.Password))
-        {
-            return ServiceResult.WithError(ErrorCodes.User.PasswordInvalid);
-        }
-
-        var hashedPassword = cryptoService.HashPassword(command.Password, out var salt);
         var newUser = UserDomain.Create(
             command.Username,
-            hashedPassword,
-            Convert.ToBase64String(salt),
             command.OrganizationId,
-            UserStatusType.Active,
+            UserStatusType.PendingInvitation,
             command.Role,
             DateTimeOffset.UtcNow,
             currentUser.UserId);
@@ -56,6 +49,9 @@ public sealed class CreateNewUserCommandHandler(
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return ServiceResult.Success;
+        var invitationToken = Guid.NewGuid().ToString();
+        await userService.SetInvitationTokenAsync(newUser.Username, invitationToken);
+
+        return ServiceDataResult<CreateNewUserCommandResult>.WithData(new CreateNewUserCommandResult(invitationToken));
     }
 }

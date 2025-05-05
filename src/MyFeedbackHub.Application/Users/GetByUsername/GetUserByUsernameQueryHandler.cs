@@ -7,7 +7,7 @@ namespace MyFeedbackHub.Application.Users.GetByUsername;
 
 public sealed record GetUserByUsernameQuery(string Username);
 
-public class GetUserByUsernameQueryHandler(IFeedbackHubDbContextFactory dbContextFactory)
+public sealed class GetUserByUsernameQueryHandler(IFeedbackHubDbContextFactory dbContextFactory)
     : IQueryHandler<GetUserByUsernameQuery, UserDomain?>
 {
     public async Task<ServiceDataResult<UserDomain?>> HandleAsync(GetUserByUsernameQuery query, CancellationToken cancellationToken = default)

@@ -14,9 +14,9 @@ public sealed class UserDomain
 
     public string Username { get; private set; }
 
-    public string Password { get; private set; }
+    public string? Password { get; private set; }
 
-    public string Salt { get; private set; }
+    public string? Salt { get; private set; }
 
     public UserRoleType Role { get; private set; }
 
@@ -45,8 +45,6 @@ public sealed class UserDomain
 
     public static UserDomain Create(
         string username,
-        string password,
-        string salt,
         Guid organizationId,
         UserStatusType status,
         UserRoleType role,
@@ -54,15 +52,11 @@ public sealed class UserDomain
         Guid byUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(username);
-        ArgumentException.ThrowIfNullOrEmpty(password);
-        ArgumentException.ThrowIfNullOrEmpty(salt);
 
         return new UserDomain
         {
             UserId = Guid.NewGuid(),
             Username = username,
-            Password = password,
-            Salt = salt,
             OrganizationId = organizationId,
             Status = status,
             Role = role,
@@ -137,5 +131,23 @@ public sealed class UserDomain
         Status = UserStatusType.Inactive;
         DeletedOn = DateTimeOffset.UtcNow;
         DeletedByUserId = byUserId;
+    }
+
+    public void SetFirstPassword(
+        string password,
+        string salt)
+    {
+        ArgumentNullException.ThrowIfNullOrEmpty(password);
+        ArgumentNullException.ThrowIfNullOrEmpty(salt);
+        if (Status != UserStatusType.PendingInvitation)
+        {
+            throw new ArgumentException();
+        }
+
+        Password = password;
+        Salt = salt;
+        Status = UserStatusType.Active;
+        UpdatedOn = DateTimeOffset.UtcNow;
+        UpdatedByUserId = UserId;
     }
 }

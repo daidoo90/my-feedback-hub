@@ -8,7 +8,6 @@ namespace MyFeedbackHub.Api.Features.Users.Create;
 
 public sealed record CreateNewUserRequestDto(
     string Username,
-    string Password,
     UserRoleType Role,
     Guid? ProjectId);
 
@@ -18,7 +17,7 @@ public sealed class CreateNewUserEndpoint : ICarterModule
     {
         app.MapPost("/users", async (
             CreateNewUserRequestDto request,
-            ICommandHandler<CreateNewUserCommand> commandHandler,
+            ICommandHandler<CreateNewUserCommand, CreateNewUserCommandResult> commandHandler,
             IUserContext currentUser,
             IUserService userService,
             CancellationToken cancellationToken = default) =>
@@ -41,7 +40,6 @@ public sealed class CreateNewUserEndpoint : ICarterModule
             var result = await commandHandler.HandleAsync(
                 new CreateNewUserCommand(
                     request.Username,
-                    request.Password,
                     currentUser.OrganizationId,
                     request.Role,
                     request.ProjectId),
@@ -52,7 +50,7 @@ public sealed class CreateNewUserEndpoint : ICarterModule
                 return result.ToBadRequest("User creation failure");
             }
 
-            return Results.Ok();
+            return Results.Ok(result.Data);
         })
         .WithName("CreateNewUser")
         .Produces(StatusCodes.Status200OK)

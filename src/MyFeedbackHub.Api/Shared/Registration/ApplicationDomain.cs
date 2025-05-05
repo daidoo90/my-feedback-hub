@@ -13,6 +13,7 @@ using MyFeedbackHub.Application.Users.Delete;
 using MyFeedbackHub.Application.Users.GetAll;
 using MyFeedbackHub.Application.Users.GetById;
 using MyFeedbackHub.Application.Users.GetByUsername;
+using MyFeedbackHub.Application.Users.SetPassword;
 using MyFeedbackHub.Application.Users.Update;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Infrastructure.Services;
@@ -31,9 +32,10 @@ internal static class ApplicationDomain
         services.AddScoped<IQueryHandler<GetByUserIdQuery, UserDomain?>, GetByUserIdQueryHandler>();
         services.AddScoped<IQueryHandler<GetUserByUsernameQuery, UserDomain?>, GetUserByUsernameQueryHandler>();
         services.AddScoped<IQueryHandler<GetAllUsersQuery, GetAllUsersResponse>, GetAllUsersQueryHandler>();
-        services.AddScoped<ICommandHandler<CreateNewUserCommand>, CreateNewUserCommandHandler>();
+        services.AddScoped<ICommandHandler<CreateNewUserCommand, CreateNewUserCommandResult>, CreateNewUserCommandHandler>();
         services.AddScoped<ICommandHandler<DeleteUserCommand>, DeleteUserCommandHandler>();
         services.AddScoped<ICommandHandler<UpdateUserCommand>, UpdateUserCommandHandler>();
+        services.AddScoped<ICommandHandler<SetPasswordCommand>, SetPasswordCommandHandler>();
 
         services.AddScoped<ICommandHandler<CreateNewProjectCommand>, CreateNewProjectCommandHandler>();
         services.AddScoped<ICommandHandler<UpdateProjectCommand>, UpdateProjectCommandHandler>();

@@ -39,14 +39,6 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserDomain>, IEn
             .HasDefaultValue(null);
 
         builder
-            .Property(u => u.Password)
-            .IsRequired();
-
-        builder
-            .Property(u => u.Salt)
-            .IsRequired();
-
-        builder
             .HasOne(u => u.Organization)
             .WithMany(b => b.Users)
             .HasForeignKey(u => u.OrganizationId);

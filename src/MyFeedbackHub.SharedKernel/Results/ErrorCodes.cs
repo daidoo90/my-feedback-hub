@@ -7,6 +7,7 @@ public sealed class ErrorCodes
         public const string PasswordInvalid = "password_invalid";
         public const string UsernameInvalid = "username_invalid";
         public const string UserInvalid = "user_invalid";
+        public const string InvitationTokenInvalid = "invitation_token_invalid";
     }
 
     public sealed class Project

@@ -6,7 +6,7 @@ public interface ICommandHandler<in TCommandRequest, TResponse> : ICommandHandle
     where TCommandRequest : class
     where TResponse : class
 {
-    Task<TResponse> HandleAsync(TCommandRequest command, CancellationToken cancellationToken = default);
+    Task<ServiceDataResult<TResponse>> HandleAsync(TCommandRequest command, CancellationToken cancellationToken = default);
 }
 
 public interface ICommandHandler<in TCommandRequest> : ICommandHandler
