@@ -2,8 +2,8 @@
 using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Application.Users.GetByUsername;
-using MyFeedbackHub.Domain.Organization;
+using MyFeedbackHub.Application.Users.Services;
+using MyFeedbackHub.SharedKernel.Results;
 
 namespace MyFeedbackHub.Api.Features.Auth.RefreshAccessToken;
 
@@ -18,7 +18,7 @@ public sealed class RefreshAccessTokenEndpoint : ICarterModule
         app.MapPost("/auth/refresh", async (
             RefreshAccessTokenRequest request,
             IAuthService authService,
-            IQueryHandler<GetUserByUsernameQuery, UserDomain> getUserByIdHandler,
+            IUserService userService,
             IUserContext userContext,
             CancellationToken cancellation) =>
         {
@@ -27,16 +27,15 @@ public sealed class RefreshAccessTokenEndpoint : ICarterModule
                 return Results.BadRequest(nameof(request.RefreshToken));
             }
 
-            var handlerResult = await getUserByIdHandler.HandleAsync(new GetUserByUsernameQuery(username), cancellation);
-            if (handlerResult.HasFailed
-                || handlerResult.Data == null
-                || handlerResult.Data.UserId != userContext.UserId
-                || handlerResult.Data.Status != Domain.Types.UserStatusType.Active)
+            var user = await userService.GetByUsernameAsync(username, cancellation);
+            if (user == null
+                || user.UserId != userContext.UserId
+                || user.Status != Domain.Types.UserStatusType.Active)
             {
-                return handlerResult.ToBadRequest("Refresh access token failure");
+                return ServiceResult.WithError(ErrorCodes.User.UserInvalid).ToBadRequest("Refresh access token failure");
             }
 
-            var accessToken = authService.GenerateAccessToken(handlerResult!.Data);
+            var accessToken = authService.GenerateAccessToken(user);
             return Results.Ok(new RefreshAccessTokenResponse(accessToken));
         })
         .WithName("RefreshAccessToken")

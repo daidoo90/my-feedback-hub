@@ -1,4 +1,5 @@
 ﻿using MyFeedbackHub.Application.Shared.Abstractions;
+using MyFeedbackHub.Application.Users.Services;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
@@ -16,7 +17,7 @@ public sealed record CreateNewUserCommandResult(string InvitationToken);
 public sealed class CreateNewUserCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
     IUserContext currentUser,
-    IUserService userService)
+    IUserInvitationService userInvitationService)
     : ICommandHandler<CreateNewUserCommand, CreateNewUserCommandResult>
 {
     public async Task<ServiceDataResult<CreateNewUserCommandResult>> HandleAsync(CreateNewUserCommand command, CancellationToken cancellationToken = default)
@@ -49,8 +50,7 @@ public sealed class CreateNewUserCommandHandler(
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        var invitationToken = Guid.NewGuid().ToString();
-        await userService.SetInvitationTokenAsync(newUser.Username, invitationToken);
+        var invitationToken = await userInvitationService.GenerateAndStoreInvitationTokenAsync(newUser.Username, cancellationToken);
 
         return ServiceDataResult<CreateNewUserCommandResult>.WithData(new CreateNewUserCommandResult(invitationToken));
     }

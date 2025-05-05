@@ -12,7 +12,7 @@ using MyFeedbackHub.Application.Users.Create;
 using MyFeedbackHub.Application.Users.Delete;
 using MyFeedbackHub.Application.Users.GetAll;
 using MyFeedbackHub.Application.Users.GetById;
-using MyFeedbackHub.Application.Users.GetByUsername;
+using MyFeedbackHub.Application.Users.Services;
 using MyFeedbackHub.Application.Users.SetPassword;
 using MyFeedbackHub.Application.Users.Update;
 using MyFeedbackHub.Domain.Organization;
@@ -30,7 +30,6 @@ internal static class ApplicationDomain
         services.AddScoped<ICommandHandler<UpdateOrganizationCommand>, UpdateOrganizationCommandHandler>();
 
         services.AddScoped<IQueryHandler<GetByUserIdQuery, UserDomain?>, GetByUserIdQueryHandler>();
-        services.AddScoped<IQueryHandler<GetUserByUsernameQuery, UserDomain?>, GetUserByUsernameQueryHandler>();
         services.AddScoped<IQueryHandler<GetAllUsersQuery, GetAllUsersResponse>, GetAllUsersQueryHandler>();
         services.AddScoped<ICommandHandler<CreateNewUserCommand, CreateNewUserCommandResult>, CreateNewUserCommandHandler>();
         services.AddScoped<ICommandHandler<DeleteUserCommand>, DeleteUserCommandHandler>();
@@ -43,6 +42,7 @@ internal static class ApplicationDomain
         services.AddScoped<IQueryHandler<GetAllProjectsQuery, GetAllProjectsResponse>, GetAllProjectsQueryHandler>();
 
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IUserInvitationService, UserInvitationService>();
 
         return services;
     }

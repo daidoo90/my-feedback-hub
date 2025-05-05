@@ -1,6 +1,7 @@
 ﻿using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Shared.Abstractions;
+using MyFeedbackHub.Application.Users.Services;
 using MyFeedbackHub.Application.Users.SetPassword;
 using MyFeedbackHub.SharedKernel.Results;
 
@@ -16,11 +17,11 @@ public sealed class SetPasswordEndpoint : ICarterModule
             SetNewPasswordRequestDto request,
             ICommandHandler<SetPasswordCommand> commandHandler,
             IUserContext currentUser,
-            IUserService userService,
+            IUserInvitationService userInvitationService,
             CancellationToken cancellationToken = default) =>
         {
 
-            var username = await userService.GetUserByInvitationToken(request.InvitationToken);
+            var username = await userInvitationService.GetUserByInvitationTokenAsync(request.InvitationToken);
             if (string.IsNullOrEmpty(username))
             {
                 return ServiceResult.WithError(ErrorCodes.User.InvitationTokenInvalid).ToBadRequest("Set password failure");

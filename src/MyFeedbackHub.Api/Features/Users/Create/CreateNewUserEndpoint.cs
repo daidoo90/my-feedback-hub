@@ -2,6 +2,7 @@
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Application.Users.Create;
+using MyFeedbackHub.Application.Users.Services;
 using MyFeedbackHub.Domain.Types;
 
 namespace MyFeedbackHub.Api.Features.Users.Create;

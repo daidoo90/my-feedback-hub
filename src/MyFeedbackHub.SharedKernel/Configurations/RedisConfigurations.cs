@@ -8,4 +8,7 @@ public sealed class RedisConfigurations
 
     [Required]
     public string ConnectionString { get; set; } = string.Empty;
+
+    [Required]
+    public string InstanceName { get; set; } = string.Empty;
 }

@@ -3,7 +3,6 @@ using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Infrastructure.Common;
 using MyFeedbackHub.Infrastructure.Services;
 using MyFeedbackHub.SharedKernel.Configurations;
-using StackExchange.Redis;
 
 namespace MyFeedbackHub.Api.Shared.Registration;
 
@@ -47,8 +46,11 @@ internal static class Infrastructure
         var provider = services.BuildServiceProvider();
         var redisSettings = provider.GetRequiredService<IOptions<RedisConfigurations>>().Value;
 
-        builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-            ConnectionMultiplexer.Connect(redisSettings.ConnectionString));
+        builder.Services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = redisSettings.ConnectionString;
+            options.InstanceName = redisSettings.InstanceName;
+        });
 
         return services;
     }

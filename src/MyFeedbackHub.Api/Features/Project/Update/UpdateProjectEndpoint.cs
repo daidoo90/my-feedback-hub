@@ -3,6 +3,7 @@ using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Project.Update;
 using MyFeedbackHub.Application.Shared.Abstractions;
+using MyFeedbackHub.Application.Users.Services;
 using MyFeedbackHub.Domain.Types;
 
 namespace MyFeedbackHub.Api.Features.Project.Update;

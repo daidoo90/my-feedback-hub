@@ -2,8 +2,7 @@
 using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Application.Users.GetByUsername;
-using MyFeedbackHub.Domain.Organization;
+using MyFeedbackHub.Application.Users.Services;
 using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
 
@@ -24,24 +23,23 @@ public sealed class LoginEndpoint : ICarterModule
         app.MapPost("/auth/login", async (
             LoginRequestDto request,
             IAuthService authService,
-            IQueryHandler<GetUserByUsernameQuery, UserDomain> queryHandler,
-            ICryptoService cryptoService) =>
+            IUserService userService,
+            ICryptoService cryptoService,
+            CancellationToken cancellationToken) =>
         {
-            var handlerResult = await queryHandler.HandleAsync(new GetUserByUsernameQuery(request.Username));
-            if (handlerResult.HasFailed
-                || handlerResult.Data == null
-                || handlerResult.Data.Status != UserStatusType.Active)
+            var user = await userService.GetByUsernameAsync(request.Username, cancellationToken);
+            if (user == null || user.Status != UserStatusType.Active)
             {
                 return ServiceResult.WithError(ErrorCodes.User.UserInvalid).ToBadRequest("Authentication failure");
             }
 
-            var isPasswordCorrect = cryptoService.VerifyPassword(request.Password, handlerResult.Data.Password, handlerResult.Data.Salt);
+            var isPasswordCorrect = cryptoService.VerifyPassword(request.Password, user.Password, user.Salt);
             if (!isPasswordCorrect)
             {
                 return ServiceResult.WithError(ErrorCodes.User.PasswordInvalid).ToBadRequest("Authentication failure");
             }
 
-            var accessToken = authService.GenerateAccessToken(handlerResult.Data);
+            var accessToken = authService.GenerateAccessToken(user);
             var refreshToken = authService.GenerateRefreshToken();
 
             return Results.Ok(new LoginResponseDto(accessToken, refreshToken));

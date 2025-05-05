@@ -2,6 +2,7 @@
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Project.GetById;
 using MyFeedbackHub.Application.Shared.Abstractions;
+using MyFeedbackHub.Application.Users.Services;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Domain.Types;
 
