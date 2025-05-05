@@ -8,7 +8,6 @@ namespace MyFeedbackHub.Application.Users.Create;
 
 public sealed record CreateNewUserCommand(
     string Username,
-    Guid OrganizationId,
     UserRoleType Role,
     Guid? ProjectId);
 
@@ -29,7 +28,7 @@ public sealed class CreateNewUserCommandHandler(
 
         var newUser = UserDomain.Create(
             command.Username,
-            command.OrganizationId,
+            currentUser.OrganizationId,
             UserStatusType.PendingInvitation,
             command.Role,
             DateTimeOffset.UtcNow,

@@ -41,7 +41,6 @@ public sealed class CreateNewUserEndpoint : ICarterModule
             var result = await commandHandler.HandleAsync(
                 new CreateNewUserCommand(
                     request.Username,
-                    currentUser.OrganizationId,
                     request.Role,
                     request.ProjectId),
                 cancellationToken);

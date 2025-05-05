@@ -8,14 +8,15 @@ namespace MyFeedbackHub.Application.Users.GetAll;
 public sealed record GetAllUsersQuery(
     int? PageNumber,
     int? PageSize,
-    Guid OrganizationId,
     IEnumerable<Guid>? projectIds);
 
 public sealed record GetAllUsersResponse(
     int TotalCount,
     IEnumerable<UserDomain> Users);
 
-public sealed class GetAllUsersQueryHandler(IFeedbackHubDbContextFactory dbContextFactory)
+public sealed class GetAllUsersQueryHandler(
+    IFeedbackHubDbContextFactory dbContextFactory,
+    IUserContext currentUser)
     : IQueryHandler<GetAllUsersQuery, GetAllUsersResponse>
 {
     public async Task<ServiceDataResult<GetAllUsersResponse>> HandleAsync(GetAllUsersQuery query, CancellationToken cancellationToken = default)
@@ -28,7 +29,7 @@ public sealed class GetAllUsersQueryHandler(IFeedbackHubDbContextFactory dbConte
             .Users
             .Include(u => u.ProjectAccess)
             .ThenInclude(pa => pa.Project)
-            .Where(p => p.OrganizationId == query.OrganizationId &&
+            .Where(p => p.OrganizationId == currentUser.OrganizationId &&
                 (query.projectIds == null ||
                  p.ProjectAccess.Any(pa => query.projectIds.Contains(pa.ProjectId))));
 

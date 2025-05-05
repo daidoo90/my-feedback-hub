@@ -50,8 +50,10 @@ public sealed class GetUsersEndpoint : ICarterModule
                             ? await userService.GetProjectIdsAsync(currentUser.UserId, cancellationToken)
                             : [];
 
-            var queryRequest = new GetAllUsersQuery(pageNumber, pageSize, currentUser.OrganizationId, projectIds);
-            var result = await queryHandler.HandleAsync(queryRequest, cancellationToken);
+            var result = await queryHandler.HandleAsync(new GetAllUsersQuery(
+                pageNumber,
+                pageSize,
+                projectIds), cancellationToken);
 
             if (result.HasFailed)
             {
