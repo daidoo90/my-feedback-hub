@@ -1,4 +1,6 @@
-﻿using MyFeedbackHub.Application.Shared.Abstractions;
+﻿using MyFeedbackHub.Application.Organization.Services;
+using MyFeedbackHub.Application.Shared.Abstractions;
+using MyFeedbackHub.Application.Users.Services;
 using MyFeedbackHub.Domain.Feedback;
 using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
@@ -13,13 +15,37 @@ public sealed record CreateNewFeedbackCommand(
 
 public sealed class CreateNewFeedbackCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
-    IUserContext currentUser)
+    IUserContext currentUser,
+    IUserService userService,
+    IOrganizationService organizationService)
     : ICommandHandler<CreateNewFeedbackCommand>
 {
     public async Task<ServiceResult> HandleAsync(CreateNewFeedbackCommand command, CancellationToken cancellationToken = default)
     {
-        // TODO: Add feedback metadata validations
-        // TODO: Validate user permissions and user-project relation
+        if (string.IsNullOrEmpty(command.Title))
+        {
+            return ServiceResult.WithError(ErrorCodes.Feedback.TitleInvalid);
+        }
+
+        if (string.IsNullOrEmpty(command.Description))
+        {
+            return ServiceResult.WithError(ErrorCodes.Feedback.DescriptionInvalid);
+        }
+
+        var projects = await userService.GetProjectIdsAsync(currentUser.UserId, cancellationToken);
+        if (!projects.Contains(command.ProjectId))
+        {
+            return ServiceResult.WithError(ErrorCodes.Project.ProjectInvalid);
+        }
+
+        if (currentUser.Role == UserRoleType.OrganizationAdmin)
+        {
+            var organizationProjects = await organizationService.GetProjectsAsync(currentUser.OrganizationId, cancellationToken);
+            if (!organizationProjects.Contains(command.ProjectId))
+            {
+                return ServiceResult.WithError(ErrorCodes.Project.ProjectInvalid);
+            }
+        }
 
         var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
 

@@ -9,7 +9,7 @@ public sealed record CreateNewCommentCommand(
     Guid FeedbackId,
     Guid? ParentCommentId);
 
-public sealed class CreateNewCommentHandler(
+public sealed class CreateNewCommentCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
     IUserContext currentUser)
     : ICommandHandler<CreateNewCommentCommand>

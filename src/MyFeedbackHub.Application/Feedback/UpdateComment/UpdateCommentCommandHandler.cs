@@ -9,7 +9,7 @@ public sealed record UpdateCommentCommand(
     Guid FeedbackId,
     string Text);
 
-public sealed class UpdateCommentHandler(
+public sealed class UpdateCommentCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
     IUserContext currentUser)
     : ICommandHandler<UpdateCommentCommand>

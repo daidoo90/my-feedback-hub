@@ -6,7 +6,7 @@ namespace MyFeedbackHub.Application.Feedback.DeleteFeedback;
 
 public sealed record DeleteFeedbackCommand(Guid FeedbackId);
 
-internal class DeleteFeedbackCommandHandler(
+public class DeleteFeedbackCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
     IUserContext currentUser)
     : ICommandHandler<DeleteFeedbackCommand>

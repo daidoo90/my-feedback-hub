@@ -3,10 +3,12 @@ using MyFeedbackHub.Api.Services.Abstraction;
 using MyFeedbackHub.Application.Feedback.Create;
 using MyFeedbackHub.Application.Feedback.CreateComment;
 using MyFeedbackHub.Application.Feedback.DeleteComment;
+using MyFeedbackHub.Application.Feedback.DeleteFeedback;
 using MyFeedbackHub.Application.Feedback.Update;
 using MyFeedbackHub.Application.Feedback.UpdateComment;
 using MyFeedbackHub.Application.Organization.Create;
 using MyFeedbackHub.Application.Organization.GetById;
+using MyFeedbackHub.Application.Organization.Services;
 using MyFeedbackHub.Application.Organization.Update;
 using MyFeedbackHub.Application.Project.Create;
 using MyFeedbackHub.Application.Project.GetAll;
@@ -48,12 +50,15 @@ internal static class ApplicationDomain
 
         services.AddScoped<ICommandHandler<CreateNewFeedbackCommand>, CreateNewFeedbackCommandHandler>();
         services.AddScoped<ICommandHandler<UpdateFeedbackCommand>, UpdateFeedbackCommandHandler>();
-        services.AddScoped<ICommandHandler<CreateNewCommentCommand>, CreateNewCommentHandler>();
-        services.AddScoped<ICommandHandler<UpdateCommentCommand>, UpdateCommentHandler>();
-        services.AddScoped<ICommandHandler<DeleteCommentCommand>, DeleteCommentHandler>();
+        services.AddScoped<ICommandHandler<DeleteFeedbackCommand>, DeleteFeedbackCommandHandler>();
+
+        services.AddScoped<ICommandHandler<CreateNewCommentCommand>, CreateNewCommentCommandHandler>();
+        services.AddScoped<ICommandHandler<UpdateCommentCommand>, UpdateCommentCommandHandler>();
+        services.AddScoped<ICommandHandler<DeleteCommentCommand>, DeleteCommentCommandHandler>();
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserInvitationService, UserInvitationService>();
+        services.AddScoped<IOrganizationService, OrganizationService>();
 
         return services;
     }

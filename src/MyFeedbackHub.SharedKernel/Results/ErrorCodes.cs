@@ -24,6 +24,8 @@ public sealed class ErrorCodes
     public sealed class Feedback
     {
         public const string FeedbackInvalid = "feedback_invalid";
+        public const string TitleInvalid = "feedback_title_invalid";
+        public const string DescriptionInvalid = "feedback_description_invalid";
     }
 
     public sealed class Comment

@@ -6,7 +6,7 @@ namespace MyFeedbackHub.Application.Feedback.DeleteComment;
 
 public sealed record DeleteCommentCommand(Guid CommentId, Guid FeedbackId);
 
-public sealed class DeleteCommentHandler(
+public sealed class DeleteCommentCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
     IUserContext currentUser)
     : ICommandHandler<DeleteCommentCommand>
