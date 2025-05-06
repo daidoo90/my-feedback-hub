@@ -2,21 +2,27 @@
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Application.Users.Services;
 using MyFeedbackHub.Domain.Organization;
+using MyFeedbackHub.SharedKernel.Results;
 
 namespace MyFeedbackHub.Infrastructure.Services;
 
 public sealed class UserService(
     IFeedbackHubDbContextFactory dbContextFactory) : IUserService
 {
-    public async Task<UserDomain> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
+    public async Task<ServiceDataResult<UserDomain>> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
         var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
         var user = await dbContext
         .Users
         .AsNoTracking()
-            .SingleAsync(u => u.Username == username, cancellationToken);
+        .SingleOrDefaultAsync(u => u.Username == username, cancellationToken);
 
-        return user;
+        if (user == null)
+        {
+            return ServiceDataResult<UserDomain>.WithError(ErrorCodes.Auth.UsernameOrPasswordInvalid);
+        }
+
+        return ServiceDataResult<UserDomain>.WithData(user);
     }
 
     public async Task<IEnumerable<Guid>> GetProjectIdsAsync(Guid userId, CancellationToken cancellationToken = default)

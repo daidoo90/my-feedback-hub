@@ -3,7 +3,6 @@ using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Application.Users.Services;
-using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
 
 namespace MyFeedbackHub.Api.Features.Auth.Login;
@@ -27,16 +26,23 @@ public sealed class LoginEndpoint : ICarterModule
             ICryptoService cryptoService,
             CancellationToken cancellationToken) =>
         {
-            var user = await userService.GetByUsernameAsync(request.Username, cancellationToken);
-            if (user == null || user.Status != UserStatusType.Active)
+            var serviceDataResult = await userService.GetByUsernameAsync(request.Username, cancellationToken);
+            if (serviceDataResult.HasFailed)
             {
-                return ServiceResult.WithError(ErrorCodes.User.UserInvalid).ToBadRequest("Authentication failure");
+                return serviceDataResult.ToBadRequest("User authentication failure");
+            }
+
+            var user = serviceDataResult.Data;
+            if (user == null
+                || user.Status != Domain.Types.UserStatusType.Active)
+            {
+                return ServiceResult.WithError(ErrorCodes.Auth.UsernameOrPasswordInvalid).ToBadRequest("Authentication failure");
             }
 
             var isPasswordCorrect = cryptoService.VerifyPassword(request.Password, user.Password, user.Salt);
             if (!isPasswordCorrect)
             {
-                return ServiceResult.WithError(ErrorCodes.User.PasswordInvalid).ToBadRequest("Authentication failure");
+                return ServiceResult.WithError(ErrorCodes.Auth.UsernameOrPasswordInvalid).ToBadRequest("Authentication failure");
             }
 
             var accessToken = authService.GenerateAccessToken(user);

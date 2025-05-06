@@ -2,6 +2,11 @@
 
 public sealed class ErrorCodes
 {
+    public sealed class Auth
+    {
+        public const string UsernameOrPasswordInvalid = "username_password_invalid";
+    }
+
     public sealed class User
     {
         public const string PasswordInvalid = "password_invalid";
