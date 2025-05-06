@@ -11,7 +11,8 @@ public sealed record CommentResponse(
     string Text,
     Guid? ParentCommentId,
     DateTimeOffset CreatedOn,
-    Guid CreatedBy);
+    Guid CreatedById,
+    string CreatedBy);
 
 public sealed class GetCommentsQueryHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
@@ -29,6 +30,18 @@ public sealed class GetCommentsQueryHandler(
             .Where(c => c.FeedbackId == query.FeedbackId
                         && !c.Feedback.IsDeleted
                         && !c.IsDeleted)
+            .Join(dbContext.Users,
+                comment => comment.CreatedBy,
+                user => user.UserId,
+                (comment, user) => new
+                {
+                    comment.CommentId,
+                    comment.Text,
+                    ParentCommentId = user.UserId,
+                    user.CreatedOn,
+                    CreatedById = user.UserId,
+                    CreatedBy = $"{user.FirstName} {user.LastName}"
+                })
             .AsNoTracking()
             .ToListAsync(cancellationToken);
 
@@ -37,6 +50,7 @@ public sealed class GetCommentsQueryHandler(
             c.Text,
             c.ParentCommentId,
             c.CreatedOn,
+            c.CreatedById,
             c.CreatedBy)));
     }
 }
