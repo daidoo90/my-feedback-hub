@@ -18,8 +18,15 @@ public sealed class UpdateFeedbackCommandHandler(
 {
     public async Task<ServiceResult> HandleAsync(UpdateFeedbackCommand command, CancellationToken cancellationToken = default)
     {
-        // TODO: Add feedback metadata validations
-        // TODO: Validate user permissions and user-project relation
+        if (string.IsNullOrEmpty(command.Title))
+        {
+            return ServiceResult.WithError(ErrorCodes.Feedback.TitleInvalid);
+        }
+
+        if (string.IsNullOrEmpty(command.Description))
+        {
+            return ServiceResult.WithError(ErrorCodes.Feedback.DescriptionInvalid);
+        }
 
         var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
 
@@ -28,7 +35,9 @@ public sealed class UpdateFeedbackCommandHandler(
                                         && !f.IsDeleted,
                                         cancellationToken);
 
-        if (feedback == null)
+        if (feedback == null
+            || feedback.IsDeleted
+            || feedback.CreatedBy != currentUser.UserId)
         {
             return ServiceResult.WithError(ErrorCodes.Feedback.FeedbackInvalid);
         }

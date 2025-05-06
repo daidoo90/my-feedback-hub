@@ -19,7 +19,9 @@ public class DeleteFeedbackCommandHandler(
             .SingleOrDefaultAsync(f => f.FeedbackId == command.FeedbackId
                                       && f.CreatedBy == currentUser.UserId, cancellationToken);
 
-        if (feedback == null || feedback.IsDeleted)
+        if (feedback == null
+            || feedback.IsDeleted
+            || feedback.CreatedBy != currentUser.UserId)
         {
             return ServiceResult.WithError(ErrorCodes.Feedback.FeedbackInvalid);
         }
