@@ -5,6 +5,7 @@ using MyFeedbackHub.Application.Feedback.CreateComment;
 using MyFeedbackHub.Application.Feedback.DeleteComment;
 using MyFeedbackHub.Application.Feedback.DeleteFeedback;
 using MyFeedbackHub.Application.Feedback.GetComments;
+using MyFeedbackHub.Application.Feedback.GetFeedbackById;
 using MyFeedbackHub.Application.Feedback.Update;
 using MyFeedbackHub.Application.Feedback.UpdateComment;
 using MyFeedbackHub.Application.Organization.Create;
@@ -37,7 +38,7 @@ internal static class ApplicationDomain
         services.AddScoped<IQueryHandler<GetOrganizationByIdQuery, OrganizationDomain?>, GetOrganizationByIdQueryHandler>();
         services.AddScoped<ICommandHandler<UpdateOrganizationCommand>, UpdateOrganizationCommandHandler>();
 
-        services.AddScoped<IQueryHandler<GetByUserIdQuery, UserDomain?>, GetByUserIdQueryHandler>();
+        services.AddScoped<IQueryHandler<GetByUserIdQuery, UserDomain>, GetByUserIdQueryHandler>();
         services.AddScoped<IQueryHandler<GetAllUsersQuery, GetAllUsersResponse>, GetAllUsersQueryHandler>();
         services.AddScoped<ICommandHandler<CreateNewUserCommand, CreateNewUserCommandResult>, CreateNewUserCommandHandler>();
         services.AddScoped<ICommandHandler<DeleteUserCommand>, DeleteUserCommandHandler>();
@@ -46,12 +47,13 @@ internal static class ApplicationDomain
 
         services.AddScoped<ICommandHandler<CreateNewProjectCommand>, CreateNewProjectCommandHandler>();
         services.AddScoped<ICommandHandler<UpdateProjectCommand>, UpdateProjectCommandHandler>();
-        services.AddScoped<IQueryHandler<GetProjectByIdQuery, ProjectDomain?>, GetProjectByIdQueryHandler>();
+        services.AddScoped<IQueryHandler<GetProjectByIdQuery, ProjectDomain>, GetProjectByIdQueryHandler>();
         services.AddScoped<IQueryHandler<GetAllProjectsQuery, GetAllProjectsResponse>, GetAllProjectsQueryHandler>();
 
         services.AddScoped<ICommandHandler<CreateNewFeedbackCommand>, CreateNewFeedbackCommandHandler>();
         services.AddScoped<ICommandHandler<UpdateFeedbackCommand>, UpdateFeedbackCommandHandler>();
         services.AddScoped<ICommandHandler<DeleteFeedbackCommand>, DeleteFeedbackCommandHandler>();
+        services.AddScoped<IQueryHandler<GetFeedbackByIdQuery, GetFeedbackByIdResponse>, GetFeedbackByIdQueryHandler>();
 
         services.AddScoped<ICommandHandler<CreateNewCommentCommand>, CreateNewCommentCommandHandler>();
         services.AddScoped<ICommandHandler<UpdateCommentCommand>, UpdateCommentCommandHandler>();

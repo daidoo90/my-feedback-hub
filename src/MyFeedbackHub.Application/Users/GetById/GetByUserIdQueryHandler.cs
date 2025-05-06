@@ -8,9 +8,9 @@ namespace MyFeedbackHub.Application.Users.GetById;
 public sealed record GetByUserIdQuery(Guid userId);
 
 public sealed class GetByUserIdQueryHandler(IFeedbackHubDbContextFactory dbContextFactory)
-    : IQueryHandler<GetByUserIdQuery, UserDomain?>
+    : IQueryHandler<GetByUserIdQuery, UserDomain>
 {
-    public async Task<ServiceDataResult<UserDomain?>> HandleAsync(GetByUserIdQuery query, CancellationToken cancellationToken = default)
+    public async Task<ServiceDataResult<UserDomain>> HandleAsync(GetByUserIdQuery query, CancellationToken cancellationToken = default)
     {
         var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
         var user = await dbContext
@@ -20,6 +20,11 @@ public sealed class GetByUserIdQueryHandler(IFeedbackHubDbContextFactory dbConte
             .AsNoTracking()
             .SingleOrDefaultAsync(u => u.UserId == query.userId, cancellationToken);
 
-        return ServiceDataResult<UserDomain?>.WithData(user);
+        if (user == null)
+        {
+            return ServiceDataResult<UserDomain>.WithError(ErrorCodes.User.NotFound);
+        }
+
+        return ServiceDataResult<UserDomain>.WithData(user);
     }
 }

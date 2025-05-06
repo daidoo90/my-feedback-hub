@@ -13,12 +13,14 @@ public sealed class ErrorCodes
         public const string UsernameInvalid = "username_invalid";
         public const string UserInvalid = "user_invalid";
         public const string InvitationTokenInvalid = "invitation_token_invalid";
+        public const string NotFound = "not_found";
     }
 
     public sealed class Project
     {
         public const string ProjectNameInvalid = "project_name_invalid";
         public const string ProjectInvalid = "project_invalid";
+        public const string NotFound = "not_found";
     }
 
     public sealed class Organization
@@ -31,6 +33,7 @@ public sealed class ErrorCodes
         public const string FeedbackInvalid = "feedback_invalid";
         public const string TitleInvalid = "feedback_title_invalid";
         public const string DescriptionInvalid = "feedback_description_invalid";
+        public const string NotFound = "not_found";
     }
 
     public sealed class Comment

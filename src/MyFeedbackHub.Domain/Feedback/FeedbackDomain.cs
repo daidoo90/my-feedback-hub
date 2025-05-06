@@ -28,7 +28,7 @@ public sealed class FeedbackDomain
 
     public DateTimeOffset CreatedOn { get; private set; }
 
-    public Guid? CreatedBy { get; private set; }
+    public Guid CreatedBy { get; private set; }
 
     public DateTimeOffset? UpdatedOn { get; private set; }
 
