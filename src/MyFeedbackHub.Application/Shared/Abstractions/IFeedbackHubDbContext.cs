@@ -11,6 +11,7 @@ public interface IFeedbackHubDbContext
     DbSet<UserDomain> Users { get; }
     DbSet<ProjectAccess> ProjectAccess { get; }
     DbSet<FeedbackDomain> Feedbacks { get; }
+    DbSet<CommentDomain> Comments { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
 

@@ -14,5 +14,6 @@ internal class ConfiguratorConstants
         internal static string Project = "Project";
         internal static string ProjectAccess = "ProjectAccess";
         internal static string Feedback = "Feedback";
+        internal static string Comment = "Comment";
     }
 }

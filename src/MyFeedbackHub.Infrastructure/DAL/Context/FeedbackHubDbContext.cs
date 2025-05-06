@@ -22,6 +22,7 @@ public class FeedbackHubDbContext : DbContext, IFeedbackHubDbContext
     public DbSet<UserDomain> Users { get; set; }
     public DbSet<ProjectAccess> ProjectAccess { get; set; }
     public DbSet<FeedbackDomain> Feedbacks { get; set; }
+    public DbSet<CommentDomain> Comments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

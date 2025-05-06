@@ -25,4 +25,9 @@ public sealed class ErrorCodes
     {
         public const string FeedbackInvalid = "feedback_invalid";
     }
+
+    public sealed class Comment
+    {
+        public const string CommentInvalid = "comment_invalid";
+    }
 }

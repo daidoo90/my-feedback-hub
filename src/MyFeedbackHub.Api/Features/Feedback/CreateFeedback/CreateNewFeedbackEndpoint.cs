@@ -4,7 +4,7 @@ using MyFeedbackHub.Application.Feedback.Create;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Domain.Types;
 
-namespace MyFeedbackHub.Api.Features.Feedback.Create;
+namespace MyFeedbackHub.Api.Features.Feedback.CreateFeedback;
 
 public sealed record CreateNewFeedbackRequestDto(
     string Title,

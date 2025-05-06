@@ -21,15 +21,5 @@ public sealed class FeedbackEntityConfigurator : IEntityTypeConfiguration<Feedba
         builder
             .Property(b => b.Title)
             .HasMaxLength(400);
-
-        builder
-            .HasOne(f => f.Project)
-            .WithMany(p => p.Feedbacks)
-            .HasForeignKey(f => f.ProjectId);
-
-        builder
-            .HasOne(f => f.Assignee)
-            .WithMany(a => a.Feedbacks)
-            .HasForeignKey(f => f.AssigneeId);
     }
 }

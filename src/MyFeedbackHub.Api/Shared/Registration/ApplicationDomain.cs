@@ -1,7 +1,10 @@
 ﻿using MyFeedbackHub.Api.Services;
 using MyFeedbackHub.Api.Services.Abstraction;
 using MyFeedbackHub.Application.Feedback.Create;
+using MyFeedbackHub.Application.Feedback.CreateComment;
+using MyFeedbackHub.Application.Feedback.DeleteComment;
 using MyFeedbackHub.Application.Feedback.Update;
+using MyFeedbackHub.Application.Feedback.UpdateComment;
 using MyFeedbackHub.Application.Organization.Create;
 using MyFeedbackHub.Application.Organization.GetById;
 using MyFeedbackHub.Application.Organization.Update;
@@ -45,6 +48,9 @@ internal static class ApplicationDomain
 
         services.AddScoped<ICommandHandler<CreateNewFeedbackCommand>, CreateNewFeedbackCommandHandler>();
         services.AddScoped<ICommandHandler<UpdateFeedbackCommand>, UpdateFeedbackCommandHandler>();
+        services.AddScoped<ICommandHandler<CreateNewCommentCommand>, CreateNewCommentHandler>();
+        services.AddScoped<ICommandHandler<UpdateCommentCommand>, UpdateCommentHandler>();
+        services.AddScoped<ICommandHandler<DeleteCommentCommand>, DeleteCommentHandler>();
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserInvitationService, UserInvitationService>();

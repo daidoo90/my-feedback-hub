@@ -1,4 +1,5 @@
 ﻿using MyFeedbackHub.Domain.Organization;
+using MyFeedbackHub.Domain.Shared.Exceptions;
 using MyFeedbackHub.Domain.Types;
 
 namespace MyFeedbackHub.Domain.Feedback;
@@ -22,6 +23,8 @@ public sealed class FeedbackDomain
     public FeedbackStatusType Status { get; private set; }
 
     public FeedbackType Type { get; private set; }
+
+    public ICollection<CommentDomain> Comments { get; private set; } = [];
 
     public DateTimeOffset CreatedOn { get; private set; }
 
@@ -80,12 +83,30 @@ public sealed class FeedbackDomain
         Guid byUser)
     {
         ArgumentException.ThrowIfNullOrEmpty(title);
+        if (IsDeleted)
+        {
+            throw new DomainException("Can't update deleted feedback.");
+        }
 
         Title = title;
         Description = description;
         Status = status;
         UpdatedOn = updatedOn;
         UpdatedBy = byUser;
+    }
+
+    public void Delete(
+        DateTimeOffset deletedOn,
+        Guid byUser)
+    {
+        if (IsDeleted)
+        {
+            throw new DomainException("Can't delete feedback, because it is already deleted.");
+        }
+
+        IsDeleted = true;
+        DeletedOn = deletedOn;
+        DeletedBy = byUser;
     }
 
     public void SetAsInReview(Guid byUserId) => SetStatus(FeedbackStatusType.InReview, byUserId);

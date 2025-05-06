@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyFeedbackHub.Infrastructure.DAL.Context;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyFeedbackHub.Infrastructure.Migrations
 {
     [DbContext(typeof(FeedbackHubDbContext))]
-    partial class FeedbackHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250506140803_CommentEntity")]
+    partial class CommentEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,7 +40,7 @@ namespace MyFeedbackHub.Infrastructure.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset?>("DeletedOn")
+                    b.Property<DateTimeOffset>("DeletedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("FeedbackId")
@@ -56,7 +59,7 @@ namespace MyFeedbackHub.Infrastructure.Migrations
                     b.Property<Guid?>("UpdatedBy")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset?>("UpdatedOn")
+                    b.Property<DateTimeOffset>("UpdatedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("CommentId");

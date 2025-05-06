@@ -1,4 +1,5 @@
 ﻿using MyFeedbackHub.Domain.Feedback;
+using MyFeedbackHub.Domain.Shared.Exceptions;
 using MyFeedbackHub.Domain.Types;
 
 namespace MyFeedbackHub.Domain.Organization;
@@ -121,6 +122,10 @@ public sealed class UserDomain
         ArgumentException.ThrowIfNullOrEmpty(firstName);
         ArgumentException.ThrowIfNullOrEmpty(lastName);
         ArgumentException.ThrowIfNullOrEmpty(phoneNumber);
+        if (Status == UserStatusType.Inactive)
+        {
+            throw new DomainException("Can't update the user, because it's already deactivated.");
+        }
 
         FirstName = firstName;
         LastName = lastName;
@@ -131,6 +136,11 @@ public sealed class UserDomain
 
     public void Delete(Guid byUserId)
     {
+        if (Status == UserStatusType.Inactive)
+        {
+            throw new DomainException("Can't deactivate the user, because it's already deactivated.");
+        }
+
         Status = UserStatusType.Inactive;
         DeletedOn = DateTimeOffset.UtcNow;
         DeletedByUserId = byUserId;
