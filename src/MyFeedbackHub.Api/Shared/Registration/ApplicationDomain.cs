@@ -6,6 +6,7 @@ using MyFeedbackHub.Application.Feedback.DeleteComment;
 using MyFeedbackHub.Application.Feedback.DeleteFeedback;
 using MyFeedbackHub.Application.Feedback.GetComments;
 using MyFeedbackHub.Application.Feedback.GetFeedbackById;
+using MyFeedbackHub.Application.Feedback.Services;
 using MyFeedbackHub.Application.Feedback.Update;
 using MyFeedbackHub.Application.Feedback.UpdateComment;
 using MyFeedbackHub.Application.Organization.Create;
@@ -63,6 +64,8 @@ internal static class ApplicationDomain
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserInvitationService, UserInvitationService>();
         services.AddScoped<IOrganizationService, OrganizationService>();
+        services.AddScoped<IFeedbackService, FeedbackService>();
+        services.AddScoped<IAuthorizationService, AuthorizationService>();
 
         return services;
     }

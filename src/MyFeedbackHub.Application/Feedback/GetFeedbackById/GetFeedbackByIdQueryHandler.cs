@@ -18,13 +18,12 @@ public sealed record GetFeedbackByIdResponse(
 
 public sealed class GetFeedbackByIdQueryHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
-    IUserContext currentUser)
+    IUserContext currentUser,
+    IAuthorizationService authorizationService)
     : IQueryHandler<GetFeedbackByIdQuery, GetFeedbackByIdResponse>
 {
     public async Task<ServiceDataResult<GetFeedbackByIdResponse>> HandleAsync(GetFeedbackByIdQuery query, CancellationToken cancellationToken = default)
     {
-        // TODO: Validate access to feedback
-
         var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
 
         var feedback = await dbContext
@@ -43,12 +42,18 @@ public sealed class GetFeedbackByIdQueryHandler(
                     feedback.Status,
                     feedback.CreatedOn,
                     CreatedById = feedback.CreatedBy,
-                    CreatedBy = $"{user.FirstName} {user.LastName}"
+                    CreatedBy = $"{user.FirstName} {user.LastName}",
+                    feedback.ProjectId
                 })
             .AsNoTracking()
             .SingleOrDefaultAsync(cancellationToken);
 
         if (feedback == null)
+        {
+            return ServiceDataResult<GetFeedbackByIdResponse>.WithError(ErrorCodes.Feedback.NotFound);
+        }
+
+        if (!await authorizationService.CanAccessProjectAsync(feedback.ProjectId, cancellationToken))
         {
             return ServiceDataResult<GetFeedbackByIdResponse>.WithError(ErrorCodes.Feedback.NotFound);
         }

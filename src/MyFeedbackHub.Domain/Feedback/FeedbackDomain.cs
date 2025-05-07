@@ -109,6 +109,24 @@ public sealed class FeedbackDomain
         DeletedBy = byUser;
     }
 
+    public void AddComment(CommentDomain comment)
+    {
+        Comments.Add(comment);
+    }
+
+    public void DeleteComment(
+        Guid commentId,
+        Guid byUser)
+    {
+        var comment = Comments.SingleOrDefault(c => c.CommentId == commentId);
+        if (comment == null)
+        {
+            throw new DomainException("Comment is not found.");
+        }
+
+        comment.Delete(DateTimeOffset.UtcNow, byUser);
+    }
+
     public void SetAsInReview(Guid byUserId) => SetStatus(FeedbackStatusType.InReview, byUserId);
 
     public void SetAsPlanned(Guid byUserId) => SetStatus(FeedbackStatusType.Planned, byUserId);

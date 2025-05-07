@@ -7,11 +7,18 @@ namespace MyFeedbackHub.Application.Project.GetById;
 
 public sealed record GetProjectByIdQuery(Guid ProjectId);
 
-public sealed class GetProjectByIdQueryHandler(IFeedbackHubDbContextFactory dbContextFactory)
+public sealed class GetProjectByIdQueryHandler(
+    IFeedbackHubDbContextFactory dbContextFactory,
+    IAuthorizationService authorizationService)
     : IQueryHandler<GetProjectByIdQuery, ProjectDomain>
 {
     public async Task<ServiceDataResult<ProjectDomain>> HandleAsync(GetProjectByIdQuery query, CancellationToken cancellationToken = default)
     {
+        if (!await authorizationService.CanAccessProjectAsync(query.ProjectId, cancellationToken))
+        {
+            return ServiceDataResult<ProjectDomain>.WithError(ErrorCodes.Feedback.NotFound);
+        }
+
         var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
         var project = await dbContext
             .Projects

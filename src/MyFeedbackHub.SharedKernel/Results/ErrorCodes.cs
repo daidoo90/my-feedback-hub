@@ -38,6 +38,7 @@ public sealed class ErrorCodes
 
     public sealed class Comment
     {
+        public const string NotFound = "not_found";
         public const string CommentInvalid = "comment_invalid";
     }
 }

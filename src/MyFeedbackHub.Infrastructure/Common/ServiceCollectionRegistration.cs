@@ -20,13 +20,6 @@ public static class ServiceCollectionRegistration
             options.EnableDetailedErrors();
         });
 
-        services.AddScoped<IFeedbackHubDbContext>(provider =>
-        {
-            var dbContextFactory = provider.GetRequiredService<IDbContextFactory<FeedbackHubDbContext>>();
-
-            return dbContextFactory.CreateDbContext();
-        });
-
         services.AddScoped<IFeedbackHubDbContextFactory, FeedbackHubDbContextFactoryAdapter>();
 
         return services;

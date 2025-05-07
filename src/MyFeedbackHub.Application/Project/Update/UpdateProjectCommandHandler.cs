@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MyFeedbackHub.Application.Feedback.GetFeedbackById;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.SharedKernel.Results;
 
@@ -12,11 +13,17 @@ public sealed record UpdateProjectCommand(
 
 public sealed class UpdateProjectCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
-    IUserContext currentUser)
+    IUserContext currentUser,
+    IAuthorizationService authorizationService)
     : ICommandHandler<UpdateProjectCommand>
 {
     public async Task<ServiceResult> HandleAsync(UpdateProjectCommand command, CancellationToken cancellationToken = default)
     {
+        if (!await authorizationService.CanAccessProjectAsync(command.ProjectId, cancellationToken))
+        {
+            return ServiceDataResult<GetFeedbackByIdResponse>.WithError(ErrorCodes.Feedback.NotFound);
+        }
+
         var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
         var project = await dbContext
             .Projects
@@ -24,9 +31,10 @@ public sealed class UpdateProjectCommandHandler(
                                         && p.OrganizationId == currentUser.OrganizationId,
             cancellationToken);
 
-        if (project == null)
+        if (project == null
+            || project.IsDeleted)
         {
-            return ServiceResult.WithError(ErrorCodes.Project.ProjectInvalid);
+            return ServiceResult.WithError(ErrorCodes.Project.NotFound);
         }
 
         project.Update(

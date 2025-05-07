@@ -28,7 +28,7 @@ public sealed class UpdateCommentCommandHandler(
             || comment.IsDeleted
             || comment.CreatedBy != currentUser.UserId)
         {
-            return ServiceResult.WithError(ErrorCodes.Comment.CommentInvalid);
+            return ServiceResult.WithError(ErrorCodes.Comment.NotFound);
         }
 
         comment.Update(
