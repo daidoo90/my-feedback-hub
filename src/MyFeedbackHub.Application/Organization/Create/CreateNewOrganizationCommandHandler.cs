@@ -1,4 +1,5 @@
-﻿using MyFeedbackHub.Application.Shared.Abstractions;
+﻿using MyFeedbackHub.Application.Organization.Services;
+using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
@@ -12,7 +13,8 @@ public sealed record CreateNewOrganizationCommand(
 
 public sealed class CreateNewOrganizationCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
-    ICryptoService cryptoService)
+    ICryptoService cryptoService,
+    IOrganizationService organizationService)
     : ICommandHandler<CreateNewOrganizationCommand>
 {
     public async Task<ServiceResult> HandleAsync(CreateNewOrganizationCommand command, CancellationToken cancellationToken = default)
@@ -30,6 +32,12 @@ public sealed class CreateNewOrganizationCommandHandler(
         if (string.IsNullOrEmpty(command.CompanyName))
         {
             return ServiceResult.WithError(ErrorCodes.Project.ProjectNameInvalid);
+        }
+
+        var existingOrganization = await organizationService.GetAsync(command.CompanyName, cancellationToken);
+        if (existingOrganization != null)
+        {
+            return ServiceResult.WithError(ErrorCodes.Organization.OrganizationInvalid);
         }
 
         var now = DateTimeOffset.UtcNow;

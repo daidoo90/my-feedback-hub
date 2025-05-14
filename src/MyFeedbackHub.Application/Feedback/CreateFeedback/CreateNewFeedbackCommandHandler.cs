@@ -32,7 +32,16 @@ public sealed class CreateNewFeedbackCommandHandler(
             return ServiceResult.WithError(ErrorCodes.Feedback.DescriptionInvalid);
         }
 
-        var projects = await userService.GetProjectIdsAsync(currentUser.UserId, cancellationToken);
+        IEnumerable<Guid> projects;
+        if (currentUser.Role == UserRoleType.OrganizationAdmin)
+        {
+            projects = await organizationService.GetProjectsAsync(currentUser.OrganizationId, cancellationToken);
+        }
+        else
+        {
+            projects = await userService.GetProjectIdsAsync(currentUser.UserId, cancellationToken);
+        }
+
         if (!projects.Contains(command.ProjectId))
         {
             return ServiceResult.WithError(ErrorCodes.Project.ProjectInvalid);
