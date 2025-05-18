@@ -4,6 +4,7 @@ using MyFeedbackHub.Application.Feedback.Create;
 using MyFeedbackHub.Application.Feedback.CreateComment;
 using MyFeedbackHub.Application.Feedback.DeleteComment;
 using MyFeedbackHub.Application.Feedback.DeleteFeedback;
+using MyFeedbackHub.Application.Feedback.GetAllFeedbacks;
 using MyFeedbackHub.Application.Feedback.GetComments;
 using MyFeedbackHub.Application.Feedback.GetFeedbackById;
 using MyFeedbackHub.Application.Feedback.Services;
@@ -60,6 +61,7 @@ internal static class ApplicationDomain
         services.AddScoped<ICommandHandler<UpdateCommentCommand>, UpdateCommentCommandHandler>();
         services.AddScoped<ICommandHandler<DeleteCommentCommand>, DeleteCommentCommandHandler>();
         services.AddScoped<IQueryHandler<GetCommentsQuery, IEnumerable<CommentResponse>>, GetCommentsQueryHandler>();
+        services.AddScoped<IQueryHandler<GetAllFeedbacksQuery, GetAllFeedbacksResponse>, GetAllFeedbacksQueryHandler>();
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserInvitationService, UserInvitationService>();
