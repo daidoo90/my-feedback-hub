@@ -31,6 +31,7 @@ public sealed class GetAllUsersQueryHandler(
             .ThenInclude(pa => pa.Project)
             .Where(p => p.OrganizationId == currentUser.OrganizationId &&
                 (query.projectIds == null ||
+                 !query.projectIds.Any() ||
                  p.ProjectAccess.Any(pa => query.projectIds.Contains(pa.ProjectId))));
 
         var totalCount = await allUsers.CountAsync(cancellationToken);
