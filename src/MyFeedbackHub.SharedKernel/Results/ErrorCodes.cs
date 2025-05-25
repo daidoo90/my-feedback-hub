@@ -14,6 +14,7 @@ public sealed class ErrorCodes
         public const string UserInvalid = "user_invalid";
         public const string InvitationTokenInvalid = "invitation_token_invalid";
         public const string NotFound = "not_found";
+        public const string PasswordNotStrong = "password_not_strong";
     }
 
     public sealed class Project
@@ -26,6 +27,7 @@ public sealed class ErrorCodes
     public sealed class Organization
     {
         public const string OrganizationInvalid = "organization_invalid";
+        public const string OrganizationNameInvalid = "organization_name_invalid";
     }
 
     public sealed class Feedback

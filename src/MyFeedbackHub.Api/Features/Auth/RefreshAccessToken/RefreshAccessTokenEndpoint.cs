@@ -27,19 +27,13 @@ public sealed class RefreshAccessTokenEndpoint : ICarterModule
                 return Results.BadRequest(nameof(request.RefreshToken));
             }
 
-            var serviceDataResult = await userService.GetByUsernameAsync(username, cancellation);
+            var user = await userService.GetByUsernameAsync(username, cancellation);
 
-            if (serviceDataResult.HasFailed)
-            {
-                return serviceDataResult.ToBadRequest("Refresh access token failure");
-            }
-
-            var user = serviceDataResult.Data;
             if (user == null
                 || user.UserId != userContext.UserId
                 || user.Status != Domain.Types.UserStatusType.Active)
             {
-                return ServiceResult.WithError(ErrorCodes.User.UserInvalid).ToBadRequest("Refresh access token failure");
+                return ServiceResult.WithError(ErrorCodes.Auth.UsernameOrPasswordInvalid).ToBadRequest("Refresh access token failure");
             }
 
             var accessToken = authService.GenerateAccessToken(user);

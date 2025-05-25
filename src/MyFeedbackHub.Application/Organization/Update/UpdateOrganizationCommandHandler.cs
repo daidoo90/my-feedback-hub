@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.SharedKernel.Results;
 
@@ -16,7 +17,8 @@ public sealed record UpdateOrganizationCommand(
 
 public sealed class UpdateOrganizationCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
-    IUserContext currentUser)
+    IUserContext currentUser,
+    IValidator<UpdateOrganizationCommand> validator)
     : ICommandHandler<UpdateOrganizationCommand>
 {
     public async Task<ServiceResult> HandleAsync(UpdateOrganizationCommand command, CancellationToken cancellationToken = default)
@@ -29,6 +31,12 @@ public sealed class UpdateOrganizationCommandHandler(
         if (organization == null)
         {
             return ServiceResult.WithError(ErrorCodes.Organization.OrganizationInvalid);
+        }
+
+        var validationResult = await validator.ValidateAsync(command, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            return ServiceResult.WithError(validationResult.Errors.First().ErrorCode);
         }
 
         organization.Update(

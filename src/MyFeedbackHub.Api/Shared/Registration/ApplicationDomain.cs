@@ -1,4 +1,5 @@
-﻿using MyFeedbackHub.Api.Services;
+﻿using FluentValidation;
+using MyFeedbackHub.Api.Services;
 using MyFeedbackHub.Api.Services.Abstraction;
 using MyFeedbackHub.Application.Feedback.Create;
 using MyFeedbackHub.Application.Feedback.CreateComment;
@@ -68,6 +69,9 @@ internal static class ApplicationDomain
         services.AddScoped<IOrganizationService, OrganizationService>();
         services.AddScoped<IFeedbackService, FeedbackService>();
         services.AddScoped<IAuthorizationService, AuthorizationService>();
+
+        services.AddScoped<IValidator<CreateNewOrganizationCommand>, CreateNewOrganizationCommandValidator>();
+        services.AddScoped<IValidator<UpdateOrganizationCommand>, UpdateOrganizationCommandValidator>();
 
         return services;
     }

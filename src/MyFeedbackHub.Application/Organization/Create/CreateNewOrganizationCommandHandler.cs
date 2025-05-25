@@ -1,4 +1,4 @@
-﻿using MyFeedbackHub.Application.Organization.Services;
+﻿using FluentValidation;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Domain.Types;
@@ -9,39 +9,24 @@ namespace MyFeedbackHub.Application.Organization.Create;
 public sealed record CreateNewOrganizationCommand(
     string Username,
     string Password,
-    string CompanyName);
+    string OrganizationName);
 
 public sealed class CreateNewOrganizationCommandHandler(
+    IValidator<CreateNewOrganizationCommand> validator,
     IFeedbackHubDbContextFactory dbContextFactory,
-    ICryptoService cryptoService,
-    IOrganizationService organizationService)
+    ICryptoService cryptoService)
     : ICommandHandler<CreateNewOrganizationCommand>
 {
     public async Task<ServiceResult> HandleAsync(CreateNewOrganizationCommand command, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrEmpty(command.Username))
+        var validationResult = await validator.ValidateAsync(command, cancellationToken);
+        if (!validationResult.IsValid)
         {
-            return ServiceResult.WithError(ErrorCodes.User.UsernameInvalid);
-        }
-
-        if (string.IsNullOrEmpty(command.Password))
-        {
-            return ServiceResult.WithError(ErrorCodes.User.PasswordInvalid);
-        }
-
-        if (string.IsNullOrEmpty(command.CompanyName))
-        {
-            return ServiceResult.WithError(ErrorCodes.Project.ProjectNameInvalid);
-        }
-
-        var existingOrganization = await organizationService.GetAsync(command.CompanyName, cancellationToken);
-        if (existingOrganization != null)
-        {
-            return ServiceResult.WithError(ErrorCodes.Organization.OrganizationInvalid);
+            return ServiceResult.WithError(validationResult.Errors.First().ErrorCode);
         }
 
         var now = DateTimeOffset.UtcNow;
-        var organization = OrganizationDomain.Create(command.CompanyName, now);
+        var organization = OrganizationDomain.Create(command.OrganizationName, now);
 
         var hashedPassword = cryptoService.HashPassword(command.Password, out var salt);
 
@@ -56,7 +41,7 @@ public sealed class CreateNewOrganizationCommandHandler(
             null);
 
         var project = ProjectDomain.Create(
-            command.CompanyName,
+            command.OrganizationName,
             organization,
             now,
             user.UserId);

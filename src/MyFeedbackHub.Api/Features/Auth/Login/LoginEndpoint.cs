@@ -26,13 +26,12 @@ public sealed class LoginEndpoint : ICarterModule
             ICryptoService cryptoService,
             CancellationToken cancellationToken) =>
         {
-            var serviceDataResult = await userService.GetByUsernameAsync(request.Username, cancellationToken);
-            if (serviceDataResult.HasFailed)
+            var user = await userService.GetByUsernameAsync(request.Username, cancellationToken);
+            if (user == null)
             {
-                return serviceDataResult.ToBadRequest("User authentication failure");
+                return ServiceResult.WithError(ErrorCodes.Auth.UsernameOrPasswordInvalid).ToBadRequest("User authentication failure");
             }
 
-            var user = serviceDataResult.Data;
             if (user == null
                 || user.Status != Domain.Types.UserStatusType.Active)
             {

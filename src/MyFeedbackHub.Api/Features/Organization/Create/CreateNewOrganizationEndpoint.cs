@@ -9,7 +9,7 @@ namespace MyFeedbackHub.Api.Features.Organization.Create;
 public sealed record CreateNewOrganizationRequestDto(
     string Username,
     string Password,
-    string CompanyName);
+    string OrganizationName);
 
 public sealed class CreateNewOrganizationEndpoint : ICarterModule
 {
@@ -23,7 +23,7 @@ public sealed class CreateNewOrganizationEndpoint : ICarterModule
             var result = await handler.HandleAsync(new CreateNewOrganizationCommand(
                 request.Username,
                 request.Password,
-                request.CompanyName),
+                request.OrganizationName),
                 cancellationToken);
 
             if (result.HasFailed)
