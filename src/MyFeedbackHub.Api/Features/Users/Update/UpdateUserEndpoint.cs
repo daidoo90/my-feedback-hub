@@ -26,7 +26,7 @@ public sealed class UpdateUserEndpoint : ICarterModule
             IUserService userService,
             CancellationToken cancellationToken) =>
         {
-            if (currentUser.Role == UserRoleType.Customer)
+            if (currentUser.Role == UserRoleType.Customer && currentUser.UserId != id)
             {
                 return Results.Forbid();
             }

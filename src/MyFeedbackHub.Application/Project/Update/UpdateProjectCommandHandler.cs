@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using MyFeedbackHub.Application.Feedback.GetFeedbackById;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.SharedKernel.Results;
@@ -14,7 +15,8 @@ public sealed record UpdateProjectCommand(
 public sealed class UpdateProjectCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
     IUserContext currentUser,
-    IAuthorizationService authorizationService)
+    IAuthorizationService authorizationService,
+    IValidator<UpdateProjectCommand> validator)
     : ICommandHandler<UpdateProjectCommand>
 {
     public async Task<ServiceResult> HandleAsync(UpdateProjectCommand command, CancellationToken cancellationToken = default)
@@ -31,10 +33,10 @@ public sealed class UpdateProjectCommandHandler(
                                         && p.OrganizationId == currentUser.OrganizationId,
             cancellationToken);
 
-        if (project == null
-            || project.IsDeleted)
+        var validationResult = await validator.ValidateAsync(command, cancellationToken);
+        if (!validationResult.IsValid)
         {
-            return ServiceResult.WithError(ErrorCodes.Project.NotFound);
+            return ServiceResult.WithError(validationResult.Errors.First().ErrorCode);
         }
 
         project.Update(

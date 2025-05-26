@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using MyFeedbackHub.Application.Shared.Abstractions;
+using MyFeedbackHub.Application.Users.Create;
 using MyFeedbackHub.SharedKernel.Results;
 
 namespace MyFeedbackHub.Application.Users.Update;
@@ -13,19 +15,22 @@ public sealed record UpdateUserCommand(
 
 public sealed class UpdateUserCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
-    IUserContext currentUser) : ICommandHandler<UpdateUserCommand>
+    IUserContext currentUser,
+    IValidator<UpdateUserCommand> validator)
+    : ICommandHandler<UpdateUserCommand>
 {
     public async Task<ServiceResult> HandleAsync(UpdateUserCommand command, CancellationToken cancellationToken = default)
     {
+        var validationResult = await validator.ValidateAsync(command, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            return ServiceDataResult<CreateNewUserCommandResult>.WithError(validationResult.Errors.First().ErrorCode);
+        }
+
         var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
         var user = await dbContext
             .Users
-            .SingleOrDefaultAsync(u => u.UserId == command.UserId, cancellationToken);
-
-        if (user?.Status != Domain.Types.UserStatusType.Active)
-        {
-            return ServiceResult.WithError(ErrorCodes.User.UserInvalid);
-        }
+            .SingleAsync(u => u.UserId == command.UserId, cancellationToken);
 
         user.Update(
             command.FirstName,

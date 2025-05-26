@@ -1,4 +1,5 @@
-﻿using MyFeedbackHub.Application.Shared.Abstractions;
+﻿using FluentValidation;
+using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.SharedKernel.Results;
 
@@ -11,19 +12,23 @@ public sealed record CreateNewProjectCommand(
 
 public sealed class CreateNewProjectCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
-    IUserContext currentUser)
+    IUserContext currentUser,
+    IValidator<CreateNewProjectCommand> validator)
     : ICommandHandler<CreateNewProjectCommand>
 {
     public async Task<ServiceResult> HandleAsync(CreateNewProjectCommand command, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrEmpty(command.Name))
+        var validationResult = await validator.ValidateAsync(command, cancellationToken);
+        if (!validationResult.IsValid)
         {
-            return ServiceResult.WithError(ErrorCodes.Project.ProjectNameInvalid);
+            return ServiceResult.WithError(validationResult.Errors.First().ErrorCode);
         }
 
         var project = ProjectDomain.Create(
             command.Name,
             currentUser.OrganizationId,
+            command.Url,
+            command.Description,
             DateTimeOffset.UtcNow,
             currentUser.UserId);
 

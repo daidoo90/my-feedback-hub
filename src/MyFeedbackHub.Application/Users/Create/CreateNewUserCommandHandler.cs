@@ -1,4 +1,5 @@
-﻿using MyFeedbackHub.Application.Shared.Abstractions;
+﻿using FluentValidation;
+using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Application.Users.Services;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Domain.Types;
@@ -16,14 +17,16 @@ public sealed record CreateNewUserCommandResult(string InvitationToken);
 public sealed class CreateNewUserCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
     IUserContext currentUser,
-    IUserInvitationService userInvitationService)
+    IUserInvitationService userInvitationService,
+    IValidator<CreateNewUserCommand> validator)
     : ICommandHandler<CreateNewUserCommand, CreateNewUserCommandResult>
 {
     public async Task<ServiceDataResult<CreateNewUserCommandResult>> HandleAsync(CreateNewUserCommand command, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrEmpty(command.Username))
+        var validationResult = await validator.ValidateAsync(command, cancellationToken);
+        if (!validationResult.IsValid)
         {
-            return ServiceDataResult<CreateNewUserCommandResult>.WithError(ErrorCodes.User.UsernameInvalid);
+            return ServiceDataResult<CreateNewUserCommandResult>.WithError(validationResult.Errors.First().ErrorCode);
         }
 
         var newUser = UserDomain.Create(

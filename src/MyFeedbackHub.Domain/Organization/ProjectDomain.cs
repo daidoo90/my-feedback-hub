@@ -40,6 +40,8 @@ public sealed class ProjectDomain
     public static ProjectDomain Create(
         string name,
         Guid organizationId,
+        string? url,
+        string? description,
         DateTimeOffset createdOn,
         Guid? byUserId)
     {
@@ -48,6 +50,8 @@ public sealed class ProjectDomain
             ProjectId = Guid.NewGuid(),
             Name = name,
             OrganizationId = organizationId,
+            Url = url,
+            Description = description,
             CreatedOn = createdOn,
             CreatedByUserId = byUserId,
         };

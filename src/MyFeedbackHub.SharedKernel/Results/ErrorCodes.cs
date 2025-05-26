@@ -2,9 +2,14 @@
 
 public sealed class ErrorCodes
 {
+    public sealed class General
+    {
+        public const string Error = "general_error";
+    }
+
     public sealed class Auth
     {
-        public const string UsernameOrPasswordInvalid = "username_password_invalid";
+        public const string UsernameOrPasswordInvalid = "username_or_password_invalid";
     }
 
     public sealed class User

@@ -73,6 +73,12 @@ internal static class ApplicationDomain
         services.AddScoped<IValidator<CreateNewOrganizationCommand>, CreateNewOrganizationCommandValidator>();
         services.AddScoped<IValidator<UpdateOrganizationCommand>, UpdateOrganizationCommandValidator>();
 
+        services.AddScoped<IValidator<CreateNewProjectCommand>, CreateNewProjectCommandValidator>();
+        services.AddScoped<IValidator<UpdateProjectCommand>, UpdateProjectCommandValidator>();
+
+        services.AddScoped<IValidator<CreateNewUserCommand>, CreateNewUserCommandValidator>();
+        services.AddScoped<IValidator<UpdateUserCommand>, UpdateUserCommandValidator>();
+
         return services;
     }
 }
