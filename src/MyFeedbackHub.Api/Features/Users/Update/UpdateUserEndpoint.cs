@@ -49,9 +49,10 @@ public sealed class UpdateUserEndpoint : ICarterModule
                 }
             }
 
-            if (currentUser.Role == UserRoleType.OrganizationAdmin)
+            if (currentUser.Role == UserRoleType.OrganizationAdmin &&
+                currentUser.UserId != id)
             {
-                var organizationProjects = await organizationService.GetProjectsAsync(currentUser.UserId, cancellationToken);
+                var organizationProjects = await organizationService.GetProjectsAsync(currentUser.OrganizationId, cancellationToken);
                 var updatedUserProjectIds = await userService.GetProjectIdsAsync(id, cancellationToken);
 
                 if (!updatedUserProjectIds.Any(p => organizationProjects.Contains(p)))

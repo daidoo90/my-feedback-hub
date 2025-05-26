@@ -83,6 +83,7 @@ public sealed class FeedbackDomain
         Guid byUser)
     {
         ArgumentException.ThrowIfNullOrEmpty(title);
+
         if (IsDeleted)
         {
             throw new DomainException("Can't update deleted feedback.");

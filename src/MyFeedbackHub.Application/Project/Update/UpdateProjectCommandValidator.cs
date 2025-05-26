@@ -5,7 +5,7 @@ using MyFeedbackHub.SharedKernel.Results;
 
 namespace MyFeedbackHub.Application.Project.Update;
 
-public class UpdateProjectCommandValidator : AbstractValidator<UpdateProjectCommand>
+public sealed class UpdateProjectCommandValidator : AbstractValidator<UpdateProjectCommand>
 {
     private readonly IOrganizationService _organizationService;
     private readonly IUserContext _currentUser;

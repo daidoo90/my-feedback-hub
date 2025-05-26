@@ -6,7 +6,7 @@ using MyFeedbackHub.SharedKernel.Results;
 
 namespace MyFeedbackHub.Application.Users.Create;
 
-public class CreateNewUserCommandValidator : AbstractValidator<CreateNewUserCommand>
+public sealed class CreateNewUserCommandValidator : AbstractValidator<CreateNewUserCommand>
 {
     private readonly IOrganizationService _organizationService;
     private readonly IUserContext _currentUser;

@@ -7,7 +7,7 @@ using MyFeedbackHub.SharedKernel.Results;
 
 namespace MyFeedbackHub.Application.Users.Update;
 
-public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
+public sealed class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
 {
     private readonly IOrganizationService _organizationService;
     private readonly IUserContext _currentUser;

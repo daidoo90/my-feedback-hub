@@ -121,7 +121,7 @@ public sealed class UserDomain
     {
         ArgumentException.ThrowIfNullOrEmpty(firstName);
         ArgumentException.ThrowIfNullOrEmpty(lastName);
-        ArgumentException.ThrowIfNullOrEmpty(phoneNumber);
+
         if (Status == UserStatusType.Inactive)
         {
             throw new DomainException("Can't update the user, because it's already deactivated.");

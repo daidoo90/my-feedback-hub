@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
@@ -13,34 +14,23 @@ public sealed record UpdateFeedbackCommand(
 
 public sealed class UpdateFeedbackCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
-    IUserContext currentUser)
+    IUserContext currentUser,
+    IValidator<UpdateFeedbackCommand> validator)
     : ICommandHandler<UpdateFeedbackCommand>
 {
     public async Task<ServiceResult> HandleAsync(UpdateFeedbackCommand command, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrEmpty(command.Title))
+        var validationResult = await validator.ValidateAsync(command, cancellationToken);
+        if (!validationResult.IsValid)
         {
-            return ServiceResult.WithError(ErrorCodes.Feedback.TitleInvalid);
-        }
-
-        if (string.IsNullOrEmpty(command.Description))
-        {
-            return ServiceResult.WithError(ErrorCodes.Feedback.DescriptionInvalid);
+            return ServiceResult.WithError(validationResult.Errors.First().ErrorCode);
         }
 
         var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
-
         var feedback = await dbContext.Feedbacks
-            .SingleOrDefaultAsync(f => f.FeedbackId == command.FeedbackId
+            .SingleAsync(f => f.FeedbackId == command.FeedbackId
                                         && !f.IsDeleted,
                                         cancellationToken);
-
-        if (feedback == null
-            || feedback.IsDeleted
-            || feedback.CreatedBy != currentUser.UserId)
-        {
-            return ServiceResult.WithError(ErrorCodes.Feedback.FeedbackInvalid);
-        }
 
         feedback.Update(
             command.Title,

@@ -26,18 +26,18 @@ public sealed class UpdateProjectCommandHandler(
             return ServiceDataResult<GetFeedbackByIdResponse>.WithError(ErrorCodes.Feedback.NotFound);
         }
 
+        var validationResult = await validator.ValidateAsync(command, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            return ServiceResult.WithError(validationResult.Errors.First().ErrorCode);
+        }
+
         var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
         var project = await dbContext
             .Projects
             .SingleOrDefaultAsync(p => p.ProjectId == command.ProjectId
                                         && p.OrganizationId == currentUser.OrganizationId,
             cancellationToken);
-
-        var validationResult = await validator.ValidateAsync(command, cancellationToken);
-        if (!validationResult.IsValid)
-        {
-            return ServiceResult.WithError(validationResult.Errors.First().ErrorCode);
-        }
 
         project.Update(
             command.Name,
