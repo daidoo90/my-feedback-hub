@@ -70,14 +70,29 @@ internal static class ApplicationDomain
         services.AddScoped<IFeedbackService, FeedbackService>();
         services.AddScoped<IAuthorizationService, AuthorizationService>();
 
-        services.AddScoped<IValidator<CreateNewOrganizationCommand>, CreateNewOrganizationCommandValidator>();
-        services.AddScoped<IValidator<UpdateOrganizationCommand>, UpdateOrganizationCommandValidator>();
+        services.AddValidators();
 
-        services.AddScoped<IValidator<CreateNewProjectCommand>, CreateNewProjectCommandValidator>();
-        services.AddScoped<IValidator<UpdateProjectCommand>, UpdateProjectCommandValidator>();
+        return services;
+    }
 
-        services.AddScoped<IValidator<CreateNewUserCommand>, CreateNewUserCommandValidator>();
-        services.AddScoped<IValidator<UpdateUserCommand>, UpdateUserCommandValidator>();
+    private static IServiceCollection AddValidators(this IServiceCollection services)
+    {
+        var applicationAssembly = typeof(CreateNewUserCommandValidator).Assembly;
+        var validatorTypes = applicationAssembly.GetTypes()
+            .Where(type => !type.IsAbstract && !type.IsInterface)
+            .Select(type => new
+            {
+                Implementation = type,
+                ValidatorInterface = type.GetInterfaces()
+                    .FirstOrDefault(i => i.IsGenericType &&
+                                         i.GetGenericTypeDefinition() == typeof(IValidator<>))
+            })
+            .Where(x => x.ValidatorInterface != null);
+
+        foreach (var validator in validatorTypes)
+        {
+            services.AddScoped(validator.ValidatorInterface, validator.Implementation);
+        }
 
         return services;
     }

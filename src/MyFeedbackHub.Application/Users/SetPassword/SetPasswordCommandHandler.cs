@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Application.Users.Create;
 using MyFeedbackHub.SharedKernel.Results;
@@ -9,24 +10,21 @@ public sealed record SetPasswordCommand(string Username, string Password);
 
 public sealed class SetPasswordCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
-    ICryptoService cryptoService)
+    ICryptoService cryptoService,
+    IValidator<SetPasswordCommand> validator)
     : ICommandHandler<SetPasswordCommand>
 {
     public async Task<ServiceResult> HandleAsync(SetPasswordCommand command, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrEmpty(command.Username))
+        var validationResult = await validator.ValidateAsync(command, cancellationToken);
+        if (!validationResult.IsValid)
         {
-            return ServiceDataResult<CreateNewUserCommandResult>.WithError(ErrorCodes.User.UsernameInvalid);
+            return ServiceDataResult<CreateNewUserCommandResult>.WithError(validationResult.Errors.First().ErrorCode);
         }
 
         var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
         var user = await dbContext.Users
-            .SingleOrDefaultAsync(u => u.Username == command.Username, cancellationToken);
-
-        if (user == null)
-        {
-            return ServiceDataResult<CreateNewUserCommandResult>.WithError(ErrorCodes.User.UsernameInvalid);
-        }
+            .SingleAsync(u => u.Username == command.Username, cancellationToken);
 
         var hashedPassword = cryptoService.HashPassword(command.Password, out var salt);
         user.SetFirstPassword(hashedPassword, Convert.ToBase64String(salt));

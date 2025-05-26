@@ -20,7 +20,6 @@ public sealed class SetPasswordEndpoint : ICarterModule
             IUserInvitationService userInvitationService,
             CancellationToken cancellationToken = default) =>
         {
-
             var username = await userInvitationService.GetUserByInvitationTokenAsync(request.InvitationToken);
             if (string.IsNullOrEmpty(username))
             {

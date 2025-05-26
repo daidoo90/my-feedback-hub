@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
+using MyFeedbackHub.Application.Organization.Services;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Application.Users.Services;
 using MyFeedbackHub.Application.Users.Update;
@@ -24,6 +25,7 @@ public sealed class UpdateUserEndpoint : ICarterModule
             ICommandHandler<UpdateUserCommand> commandHandler,
             IUserContext currentUser,
             IUserService userService,
+            IOrganizationService organizationService,
             CancellationToken cancellationToken) =>
         {
             if (currentUser.Role == UserRoleType.Customer && currentUser.UserId != id)
@@ -42,6 +44,17 @@ public sealed class UpdateUserEndpoint : ICarterModule
                 var updatedUserProjectIds = await userService.GetProjectIdsAsync(id, cancellationToken);
 
                 if (!updatedUserProjectIds.Any(p => currentUserProjectIds.Contains(p)))
+                {
+                    return Results.Forbid();
+                }
+            }
+
+            if (currentUser.Role == UserRoleType.OrganizationAdmin)
+            {
+                var organizationProjects = await organizationService.GetProjectsAsync(currentUser.UserId, cancellationToken);
+                var updatedUserProjectIds = await userService.GetProjectIdsAsync(id, cancellationToken);
+
+                if (!updatedUserProjectIds.Any(p => organizationProjects.Contains(p)))
                 {
                     return Results.Forbid();
                 }

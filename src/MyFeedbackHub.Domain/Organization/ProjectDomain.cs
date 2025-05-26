@@ -84,8 +84,6 @@ public sealed class ProjectDomain
         Guid byUserId)
     {
         ArgumentException.ThrowIfNullOrEmpty(name);
-        ArgumentException.ThrowIfNullOrEmpty(url);
-        ArgumentException.ThrowIfNullOrEmpty(description);
 
         Name = name;
         Url = url;
