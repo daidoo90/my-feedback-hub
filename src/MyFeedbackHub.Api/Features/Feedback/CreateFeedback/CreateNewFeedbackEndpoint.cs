@@ -8,7 +8,7 @@ namespace MyFeedbackHub.Api.Features.Feedback.CreateFeedback;
 
 public sealed record CreateNewFeedbackRequestDto(
     string Title,
-    string Description,
+    string? Description,
     FeedbackType Type,
     Guid ProjectId
     );

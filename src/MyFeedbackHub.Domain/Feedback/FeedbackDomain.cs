@@ -45,7 +45,7 @@ public sealed class FeedbackDomain
 
     public static FeedbackDomain Create(
         string title,
-        string description,
+        string? description,
         FeedbackType type,
         Guid projectId,
         DateTimeOffset createdOn,

@@ -6,6 +6,7 @@ using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Application.Users.Services;
 using MyFeedbackHub.Domain.Feedback;
 using MyFeedbackHub.Domain.Types;
+using MyFeedbackHub.SharedKernel.Results;
 
 namespace MyFeedbackHub.Api.Features.Feedback.GetAllFeedbacks;
 
@@ -65,6 +66,7 @@ public sealed class GetFeedbacksEndpoint : ICarterModule
         app.MapGet("/feedbacks", async (
            int? pageNumber,
            int? pageSize,
+           Guid? projectId,
            IQueryHandler<GetAllFeedbacksQuery, GetAllFeedbacksResponse> queryHandler,
            IUserContext currentUser,
            IUserService userService,
@@ -75,10 +77,17 @@ public sealed class GetFeedbacksEndpoint : ICarterModule
                             ? await organizationService.GetProjectsAsync(currentUser.OrganizationId)
                             : await userService.GetProjectIdsAsync(currentUser.UserId, cancellationToken);
 
+            if (projectId.HasValue &&
+               !projectIds.Contains(projectId.Value))
+            {
+                return ServiceResult.WithError(ErrorCodes.Project.ProjectInvalid).ToBadRequest("Get all feedbacks failure");
+            }
+
             var result = await queryHandler.HandleAsync(new GetAllFeedbacksQuery(
                 pageNumber,
                 pageSize,
-                projectIds), cancellationToken);
+                projectId.HasValue ? [projectId.Value] : projectIds),
+                cancellationToken);
 
             if (result.HasFailed)
             {
@@ -87,11 +96,11 @@ public sealed class GetFeedbacksEndpoint : ICarterModule
 
             return Results.Ok(FeedbacksResponseDto.From(result!.Data));
         })
-       .WithName("GetFeedbacks")
-        .Produces(StatusCodes.Status200OK)
-        .WithSummary("Get feedbacks")
-        .WithDescription("Get feedbacks")
-        .WithTags("Feedback")
-        .RequireAuthorization();
+            .WithName("GetFeedbacks")
+            .Produces(StatusCodes.Status200OK)
+            .WithSummary("Get feedbacks")
+            .WithDescription("Get feedbacks")
+            .WithTags("Feedback")
+            .RequireAuthorization();
     }
 }

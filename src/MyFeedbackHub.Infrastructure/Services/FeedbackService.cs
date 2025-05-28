@@ -24,7 +24,6 @@ public sealed class FeedbackService(IFeedbackHubDbContextFactory dbContextFactor
         return await dbContext
             .Feedbacks
             .Include(f => f.Comments)
-            .AsNoTracking()
             .SingleOrDefaultAsync(c => c.FeedbackId == feedbackId, cancellationToken);
     }
 }

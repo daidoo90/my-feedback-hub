@@ -1,6 +1,5 @@
-﻿using MyFeedbackHub.Application.Organization.Services;
+﻿using FluentValidation;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Application.Users.Services;
 using MyFeedbackHub.Domain.Feedback;
 using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
@@ -9,51 +8,22 @@ namespace MyFeedbackHub.Application.Feedback.Create;
 
 public sealed record CreateNewFeedbackCommand(
     string Title,
-    string Description,
+    string? Description,
     FeedbackType Type,
     Guid ProjectId);
 
 public sealed class CreateNewFeedbackCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
     IUserContext currentUser,
-    IUserService userService,
-    IOrganizationService organizationService)
+    IValidator<CreateNewFeedbackCommand> validator)
     : ICommandHandler<CreateNewFeedbackCommand>
 {
     public async Task<ServiceResult> HandleAsync(CreateNewFeedbackCommand command, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrEmpty(command.Title))
+        var validationResult = await validator.ValidateAsync(command, cancellationToken);
+        if (!validationResult.IsValid)
         {
-            return ServiceResult.WithError(ErrorCodes.Feedback.TitleInvalid);
-        }
-
-        if (string.IsNullOrEmpty(command.Description))
-        {
-            return ServiceResult.WithError(ErrorCodes.Feedback.DescriptionInvalid);
-        }
-
-        IEnumerable<Guid> projects;
-        if (currentUser.Role == UserRoleType.OrganizationAdmin)
-        {
-            projects = await organizationService.GetProjectsAsync(currentUser.OrganizationId, cancellationToken);
-        }
-        else
-        {
-            projects = await userService.GetProjectIdsAsync(currentUser.UserId, cancellationToken);
-        }
-
-        if (!projects.Contains(command.ProjectId))
-        {
-            return ServiceResult.WithError(ErrorCodes.Project.ProjectInvalid);
-        }
-
-        if (currentUser.Role == UserRoleType.OrganizationAdmin)
-        {
-            var organizationProjects = await organizationService.GetProjectsAsync(currentUser.OrganizationId, cancellationToken);
-            if (!organizationProjects.Contains(command.ProjectId))
-            {
-                return ServiceResult.WithError(ErrorCodes.Project.ProjectInvalid);
-            }
+            return ServiceResult.WithError(validationResult.Errors.First().ErrorCode);
         }
 
         var dbContext = await dbContextFactory.CreateAsync(cancellationToken);

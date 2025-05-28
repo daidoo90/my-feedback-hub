@@ -9,7 +9,7 @@ public sealed record GetCommentsQuery(Guid FeedbackId);
 public sealed record CommentResponse(
     Guid CommentId,
     string Text,
-    Guid? ParentCommentId,
+    Guid? ParentComment,
     DateTimeOffset CreatedOn,
     Guid CreatedById,
     string CreatedBy);
@@ -37,7 +37,7 @@ public sealed class GetCommentsQueryHandler(
                 {
                     comment.CommentId,
                     comment.Text,
-                    ParentCommentId = user.UserId,
+                    ParentCommentId = comment.ParentCommentId,
                     user.CreatedOn,
                     CreatedById = user.UserId,
                     CreatedBy = $"{user.FirstName} {user.LastName}"
@@ -48,7 +48,7 @@ public sealed class GetCommentsQueryHandler(
         return ServiceDataResult<IEnumerable<CommentResponse>>.WithData(comments.Select(c => new CommentResponse(
             c.CommentId,
             c.Text,
-            c.ParentCommentId,
+            c.ParentCommentId,// c.ParentComment != null ? new CommentResponse(c.ParentComment.CommentId, c.ParentComment.Text, null, c.ParentComment.CreatedOn, c.ParentComment.CreatedBy, string.Empty) : null,
             c.CreatedOn,
             c.CreatedById,
             c.CreatedBy)));

@@ -14,6 +14,8 @@ public sealed class CommentDomain
 
     public Guid? ParentCommentId { get; private set; }
 
+    //public CommentDomain? ParentComment { get; private set; }
+
     public DateTimeOffset CreatedOn { get; private set; }
 
     public Guid CreatedBy { get; private set; }

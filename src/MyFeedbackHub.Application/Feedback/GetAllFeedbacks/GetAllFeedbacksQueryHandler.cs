@@ -28,7 +28,7 @@ public sealed class GetAllFeedbacksQueryHandler(IFeedbackHubDbContextFactory dbC
         var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
         var allFeedbacks = dbContext
             .Feedbacks
-            .Where(f => query.projectIds.Contains(f.ProjectId));
+            .Where(f => query.projectIds.Contains(f.ProjectId) && !f.IsDeleted);
 
         var totalCount = await allFeedbacks.CountAsync(cancellationToken);
         var feedbacks = await allFeedbacks

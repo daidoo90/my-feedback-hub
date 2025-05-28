@@ -1,4 +1,5 @@
-﻿using MyFeedbackHub.Application.Feedback.Services;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Domain.Feedback;
 using MyFeedbackHub.SharedKernel.Results;
@@ -13,38 +14,28 @@ public sealed record CreateNewCommentCommand(
 public sealed class CreateNewCommentCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
     IUserContext currentUser,
-    IFeedbackService feedbackService,
-    IAuthorizationService authorizationService)
+    IAuthorizationService authorizationService,
+    IValidator<CreateNewCommentCommand> validator)
     : ICommandHandler<CreateNewCommentCommand>
 {
     public async Task<ServiceResult> HandleAsync(CreateNewCommentCommand command, CancellationToken cancellationToken = default)
     {
+        var validationResult = await validator.ValidateAsync(command, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            return ServiceResult.WithError(validationResult.Errors.First().ErrorCode);
+        }
+
         var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
 
-        var feedback = await feedbackService.GetFeedbackByIdAsync(command.FeedbackId, cancellationToken);
-        if (feedback == null
-            || feedback.IsDeleted)
-        {
-            return ServiceResult.WithError(ErrorCodes.Feedback.NotFound);
-        }
+        var feedback = await dbContext
+            .Feedbacks
+            .Include(f => f.Comments)
+            .SingleAsync(c => c.FeedbackId == command.FeedbackId, cancellationToken);
 
         if (!await authorizationService.CanAccessProjectAsync(feedback.ProjectId, cancellationToken))
         {
             return ServiceResult.WithError(ErrorCodes.Feedback.NotFound);
-        }
-
-        if (string.IsNullOrEmpty(command.Text))
-        {
-            return ServiceResult.WithError(ErrorCodes.Comment.CommentInvalid);
-        }
-
-        if (command.ParentCommentId != null)
-        {
-            var parentComment = await feedbackService.GetCommentByIdAsync(command.ParentCommentId.Value, cancellationToken);
-            if (parentComment == null)
-            {
-                return ServiceResult.WithError(ErrorCodes.Comment.CommentInvalid);
-            }
         }
 
         var newComment = CommentDomain.Create(
@@ -56,6 +47,7 @@ public sealed class CreateNewCommentCommandHandler(
 
         feedback.AddComment(newComment);
 
+        await dbContext.Comments.AddAsync(newComment, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return ServiceResult.Success;

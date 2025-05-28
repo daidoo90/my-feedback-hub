@@ -28,7 +28,7 @@ public sealed class AddNewCommentEndpoint : ICarterModule
 
             if (serviceResult.HasFailed)
             {
-                return serviceResult.ToBadRequest("Adding feedback comment failure");
+                return serviceResult.ToBadRequest("Adding comment failure");
             }
 
             return Results.Created();
@@ -36,8 +36,8 @@ public sealed class AddNewCommentEndpoint : ICarterModule
         .WithName("AddNewFeedbackComment")
         .Produces(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status400BadRequest)
-        .WithSummary("Add new feedback comment")
-        .WithDescription("Add new feedback comment")
+        .WithSummary("Add new comment")
+        .WithDescription("Add new comment")
         .WithTags("Feedback")
         .RequireAuthorization();
     }
