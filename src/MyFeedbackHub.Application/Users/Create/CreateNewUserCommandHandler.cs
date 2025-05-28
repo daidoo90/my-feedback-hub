@@ -1,11 +1,10 @@
 ﻿using FluentValidation;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Application.Users.Services;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Users.Create;
+namespace MyFeedbackHub.Application.Users;
 
 public sealed record CreateNewUserCommand(
     string Username,

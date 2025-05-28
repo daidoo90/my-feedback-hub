@@ -1,14 +1,13 @@
 ﻿using FluentValidation;
-using MyFeedbackHub.Application.Feedback.Services;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Feedback.CreateComment;
+namespace MyFeedbackHub.Application.Feedback;
 
-public sealed class CreateNewCommentCommandValidator : AbstractValidator<CreateNewCommentCommand>
+public sealed class AddCommentToFeedbackCommandValidator : AbstractValidator<CreateNewCommentCommand>
 {
     private readonly IFeedbackService _feedbackService;
 
-    public CreateNewCommentCommandValidator(
+    public AddCommentToFeedbackCommandValidator(
         IFeedbackService feedbackService)
     {
         _feedbackService = feedbackService;

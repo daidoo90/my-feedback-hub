@@ -2,7 +2,7 @@
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Feedback.DeleteComment;
+namespace MyFeedbackHub.Application.Feedback;
 
 public sealed record DeleteCommentCommand(Guid CommentId, Guid FeedbackId);
 

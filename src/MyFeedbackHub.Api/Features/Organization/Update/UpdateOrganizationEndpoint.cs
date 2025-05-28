@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
-using MyFeedbackHub.Application.Organization.Update;
+using MyFeedbackHub.Application.Organization;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Domain.Types;
 
-namespace MyFeedbackHub.Api.Features.Organization.Update;
+namespace MyFeedbackHub.Api.Features.Organization;
 
 public sealed record UpdateOrganizationRequestDto(
     string Name,

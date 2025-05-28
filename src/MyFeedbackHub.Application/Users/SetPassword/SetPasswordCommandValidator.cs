@@ -1,9 +1,8 @@
 ﻿using FluentValidation;
-using MyFeedbackHub.Application.Users.Services;
 using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Users.SetPassword;
+namespace MyFeedbackHub.Application.Users;
 
 public sealed class SetPasswordCommandValidator : AbstractValidator<SetPasswordCommand>
 {

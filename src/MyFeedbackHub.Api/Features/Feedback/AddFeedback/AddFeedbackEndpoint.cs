@@ -1,24 +1,24 @@
 ﻿using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
-using MyFeedbackHub.Application.Feedback.Create;
+using MyFeedbackHub.Application.Feedback;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Domain.Types;
 
-namespace MyFeedbackHub.Api.Features.Feedback.CreateFeedback;
+namespace MyFeedbackHub.Api.Features.Feedback;
 
-public sealed record CreateNewFeedbackRequestDto(
+public sealed record AddFeedbackRequestDto(
     string Title,
     string? Description,
     FeedbackType Type,
     Guid ProjectId
     );
 
-public sealed class CreateNewFeedbackEndpoint : ICarterModule
+public sealed class AddFeedbackEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapPost("/feedbacks", async (
-            CreateNewFeedbackRequestDto request,
+            AddFeedbackRequestDto request,
             ICommandHandler<CreateNewFeedbackCommand> commandHandler,
             CancellationToken cancellationToken) =>
         {
@@ -36,11 +36,11 @@ public sealed class CreateNewFeedbackEndpoint : ICarterModule
 
             return Results.Created();
         })
-        .WithName("CreateNewFeedback")
+        .WithName("AddFeedback")
         .Produces(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status400BadRequest)
-        .WithSummary("Create new feedback")
-        .WithDescription("Create new feedback")
+        .WithSummary("Add feedback")
+        .WithDescription("Add feedback")
         .WithTags("Feedback")
         .RequireAuthorization();
     }

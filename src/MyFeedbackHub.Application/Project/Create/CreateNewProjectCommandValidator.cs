@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using MyFeedbackHub.Application.Organization.Services;
+using MyFeedbackHub.Application.Organization;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Project.Create;
+namespace MyFeedbackHub.Application.Project;
 
 public sealed class CreateNewProjectCommandValidator : AbstractValidator<CreateNewProjectCommand>
 {

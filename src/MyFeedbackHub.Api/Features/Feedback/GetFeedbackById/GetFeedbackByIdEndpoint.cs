@@ -1,9 +1,9 @@
 ﻿using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
-using MyFeedbackHub.Application.Feedback.GetFeedbackById;
+using MyFeedbackHub.Application.Feedback;
 using MyFeedbackHub.Application.Shared.Abstractions;
 
-namespace MyFeedbackHub.Api.Features.Feedback.GetFeedbackById;
+namespace MyFeedbackHub.Api.Features.Feedback;
 
 public sealed class GetFeedbackByIdEndpoint : ICarterModule
 {
@@ -28,7 +28,7 @@ public sealed class GetFeedbackByIdEndpoint : ICarterModule
         .Produces(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status400BadRequest)
         .WithSummary("Get feedback")
-        .WithDescription("Get organization")
+        .WithDescription("Get feedback")
         .WithTags("Feedback")
         .RequireAuthorization();
     }

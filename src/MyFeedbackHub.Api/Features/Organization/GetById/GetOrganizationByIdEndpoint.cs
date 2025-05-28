@@ -1,12 +1,12 @@
-﻿using MyFeedbackHub.Api.Features.Project.GetById;
+﻿using MyFeedbackHub.Api.Features.Project;
 using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
-using MyFeedbackHub.Application.Organization.GetById;
+using MyFeedbackHub.Application.Organization;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Domain.Types;
 
-namespace MyFeedbackHub.Api.Features.Organization.GetById;
+namespace MyFeedbackHub.Api.Features.Organization;
 
 public sealed class OrganizationResponseDto
 {

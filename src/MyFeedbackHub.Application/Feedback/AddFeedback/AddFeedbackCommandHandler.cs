@@ -4,7 +4,7 @@ using MyFeedbackHub.Domain.Feedback;
 using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Feedback.Create;
+namespace MyFeedbackHub.Application.Feedback;
 
 public sealed record CreateNewFeedbackCommand(
     string Title,
@@ -12,7 +12,7 @@ public sealed record CreateNewFeedbackCommand(
     FeedbackType Type,
     Guid ProjectId);
 
-public sealed class CreateNewFeedbackCommandHandler(
+public sealed class AddFeedbackCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
     IUserContext currentUser,
     IValidator<CreateNewFeedbackCommand> validator)

@@ -1,6 +1,6 @@
 ﻿using MyFeedbackHub.Domain.Organization;
 
-namespace MyFeedbackHub.Application.Organization.Services;
+namespace MyFeedbackHub.Application.Organization;
 
 public interface IOrganizationService
 {

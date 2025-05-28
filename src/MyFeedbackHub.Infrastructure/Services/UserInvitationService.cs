@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
-using MyFeedbackHub.Application.Users.Services;
+using MyFeedbackHub.Application.Users;
 
 namespace MyFeedbackHub.Infrastructure.Services;
 

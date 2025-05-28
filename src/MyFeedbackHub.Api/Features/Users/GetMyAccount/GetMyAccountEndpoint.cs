@@ -1,10 +1,9 @@
-﻿using MyFeedbackHub.Api.Features.Users.GetById;
-using MyFeedbackHub.Api.Shared.Utils.Carter;
+﻿using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Application.Users.GetById;
+using MyFeedbackHub.Application.Users;
 using MyFeedbackHub.Domain.Organization;
 
-namespace MyFeedbackHub.Api.Features.Users.GetMyAccount;
+namespace MyFeedbackHub.Api.Features.Users;
 
 public sealed class GetMyAccountEndpoint : ICarterModule
 {

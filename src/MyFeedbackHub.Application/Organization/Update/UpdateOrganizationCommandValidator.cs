@@ -1,8 +1,7 @@
 ﻿using FluentValidation;
-using MyFeedbackHub.Application.Organization.Services;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Organization.Update;
+namespace MyFeedbackHub.Application.Organization;
 
 public sealed class UpdateOrganizationCommandValidator : AbstractValidator<UpdateOrganizationCommand>
 {

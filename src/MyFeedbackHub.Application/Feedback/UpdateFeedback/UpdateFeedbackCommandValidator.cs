@@ -1,12 +1,11 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using MyFeedbackHub.Application.Feedback.Update;
-using MyFeedbackHub.Application.Organization.Services;
+using MyFeedbackHub.Application.Organization;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Application.Users.Services;
+using MyFeedbackHub.Application.Users;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Feedback.UpdateFeedback;
+namespace MyFeedbackHub.Application.Feedback;
 
 public sealed class UpdateFeedbackCommandValidator : AbstractValidator<UpdateFeedbackCommand>
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Application.Users.Services;
+using MyFeedbackHub.Application.Users;
 using MyFeedbackHub.Domain.Organization;
 
 namespace MyFeedbackHub.Infrastructure.Services;

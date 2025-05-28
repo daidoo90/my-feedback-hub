@@ -1,9 +1,9 @@
 ﻿using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
-using MyFeedbackHub.Application.Feedback.DeleteComment;
+using MyFeedbackHub.Application.Feedback;
 using MyFeedbackHub.Application.Shared.Abstractions;
 
-namespace MyFeedbackHub.Api.Features.Feedback.DeleteComment;
+namespace MyFeedbackHub.Api.Features.Feedback;
 
 public sealed class DeleteCommentEndpoint : ICarterModule
 {

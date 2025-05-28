@@ -3,7 +3,7 @@ using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Users.Delete;
+namespace MyFeedbackHub.Application.Users;
 
 public sealed record DeleteUserCommand(Guid UserId);
 

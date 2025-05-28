@@ -1,12 +1,10 @@
-﻿using MyFeedbackHub.Api.Features.Users.GetById;
-using MyFeedbackHub.Api.Shared.Utils;
+﻿using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Application.Users.GetAll;
-using MyFeedbackHub.Application.Users.Services;
+using MyFeedbackHub.Application.Users;
 using MyFeedbackHub.Domain.Types;
 
-namespace MyFeedbackHub.Api.Features.Users.GetAll;
+namespace MyFeedbackHub.Api.Features.Users;
 
 public sealed class UsersResponseDto
 {

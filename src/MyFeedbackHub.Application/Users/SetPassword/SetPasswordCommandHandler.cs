@@ -1,10 +1,9 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Application.Users.Create;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Users.SetPassword;
+namespace MyFeedbackHub.Application.Users;
 
 public sealed record SetPasswordCommand(string Username, string Password);
 

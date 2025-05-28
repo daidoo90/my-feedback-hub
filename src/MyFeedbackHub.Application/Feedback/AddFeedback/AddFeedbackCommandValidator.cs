@@ -1,20 +1,19 @@
 ﻿using FluentValidation;
-using MyFeedbackHub.Application.Feedback.Create;
-using MyFeedbackHub.Application.Organization.Services;
+using MyFeedbackHub.Application.Organization;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Application.Users.Services;
+using MyFeedbackHub.Application.Users;
 using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Feedback.CreateFeedback;
+namespace MyFeedbackHub.Application.Feedback;
 
-public sealed class CreateNewFeedbackCommandValidator : AbstractValidator<CreateNewFeedbackCommand>
+public sealed class AddFeedbackCommandValidator : AbstractValidator<CreateNewFeedbackCommand>
 {
     private readonly IUserContext _currentUser;
     private readonly IOrganizationService _organizationService;
     private readonly IUserService _userService;
 
-    public CreateNewFeedbackCommandValidator(
+    public AddFeedbackCommandValidator(
         IUserContext userContext,
         IOrganizationService organizationService,
         IUserService userService)

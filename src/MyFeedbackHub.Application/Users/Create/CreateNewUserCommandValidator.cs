@@ -1,10 +1,9 @@
 ﻿using FluentValidation;
-using MyFeedbackHub.Application.Organization.Services;
+using MyFeedbackHub.Application.Organization;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Application.Users.Services;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Users.Create;
+namespace MyFeedbackHub.Application.Users;
 
 public sealed class CreateNewUserCommandValidator : AbstractValidator<CreateNewUserCommand>
 {

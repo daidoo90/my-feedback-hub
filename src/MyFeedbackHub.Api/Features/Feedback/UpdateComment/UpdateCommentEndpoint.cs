@@ -1,9 +1,9 @@
 ﻿using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
-using MyFeedbackHub.Application.Feedback.UpdateComment;
+using MyFeedbackHub.Application.Feedback;
 using MyFeedbackHub.Application.Shared.Abstractions;
 
-namespace MyFeedbackHub.Api.Features.Feedback.UpdateComment;
+namespace MyFeedbackHub.Api.Features.Feedback;
 
 public sealed record UpdateCommentRequestDto(
     string Text,

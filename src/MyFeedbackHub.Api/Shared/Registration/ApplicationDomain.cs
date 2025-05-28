@@ -1,32 +1,11 @@
 ﻿using FluentValidation;
 using MyFeedbackHub.Api.Services;
 using MyFeedbackHub.Api.Services.Abstraction;
-using MyFeedbackHub.Application.Feedback.Create;
-using MyFeedbackHub.Application.Feedback.CreateComment;
-using MyFeedbackHub.Application.Feedback.DeleteComment;
-using MyFeedbackHub.Application.Feedback.DeleteFeedback;
-using MyFeedbackHub.Application.Feedback.GetAllFeedbacks;
-using MyFeedbackHub.Application.Feedback.GetComments;
-using MyFeedbackHub.Application.Feedback.GetFeedbackById;
-using MyFeedbackHub.Application.Feedback.Services;
-using MyFeedbackHub.Application.Feedback.Update;
-using MyFeedbackHub.Application.Feedback.UpdateComment;
-using MyFeedbackHub.Application.Organization.Create;
-using MyFeedbackHub.Application.Organization.GetById;
-using MyFeedbackHub.Application.Organization.Services;
-using MyFeedbackHub.Application.Organization.Update;
-using MyFeedbackHub.Application.Project.Create;
-using MyFeedbackHub.Application.Project.GetAll;
-using MyFeedbackHub.Application.Project.GetById;
-using MyFeedbackHub.Application.Project.Update;
+using MyFeedbackHub.Application.Feedback;
+using MyFeedbackHub.Application.Organization;
+using MyFeedbackHub.Application.Project;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Application.Users.Create;
-using MyFeedbackHub.Application.Users.Delete;
-using MyFeedbackHub.Application.Users.GetAll;
-using MyFeedbackHub.Application.Users.GetById;
-using MyFeedbackHub.Application.Users.Services;
-using MyFeedbackHub.Application.Users.SetPassword;
-using MyFeedbackHub.Application.Users.Update;
+using MyFeedbackHub.Application.Users;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Infrastructure.Services;
 
@@ -53,12 +32,12 @@ internal static class ApplicationDomain
         services.AddScoped<IQueryHandler<GetProjectByIdQuery, ProjectDomain>, GetProjectByIdQueryHandler>();
         services.AddScoped<IQueryHandler<GetAllProjectsQuery, GetAllProjectsResponse>, GetAllProjectsQueryHandler>();
 
-        services.AddScoped<ICommandHandler<CreateNewFeedbackCommand>, CreateNewFeedbackCommandHandler>();
+        services.AddScoped<ICommandHandler<CreateNewFeedbackCommand>, AddFeedbackCommandHandler>();
         services.AddScoped<ICommandHandler<UpdateFeedbackCommand>, UpdateFeedbackCommandHandler>();
         services.AddScoped<ICommandHandler<DeleteFeedbackCommand>, DeleteFeedbackCommandHandler>();
         services.AddScoped<IQueryHandler<GetFeedbackByIdQuery, GetFeedbackByIdResponse>, GetFeedbackByIdQueryHandler>();
 
-        services.AddScoped<ICommandHandler<CreateNewCommentCommand>, CreateNewCommentCommandHandler>();
+        services.AddScoped<ICommandHandler<CreateNewCommentCommand>, AddCommentToFeedbackCommandHandler>();
         services.AddScoped<ICommandHandler<UpdateCommentCommand>, UpdateCommentCommandHandler>();
         services.AddScoped<ICommandHandler<DeleteCommentCommand>, DeleteCommentCommandHandler>();
         services.AddScoped<IQueryHandler<GetCommentsQuery, IEnumerable<CommentResponse>>, GetCommentsQueryHandler>();

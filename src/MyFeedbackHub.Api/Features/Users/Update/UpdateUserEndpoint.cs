@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
-using MyFeedbackHub.Application.Organization.Services;
+using MyFeedbackHub.Application.Organization;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Application.Users.Services;
-using MyFeedbackHub.Application.Users.Update;
+using MyFeedbackHub.Application.Users;
 using MyFeedbackHub.Domain.Types;
 
-namespace MyFeedbackHub.Api.Features.Users.Update;
+namespace MyFeedbackHub.Api.Features.Users;
 
 public sealed record UpdateUserRequestDto(
     string Email,

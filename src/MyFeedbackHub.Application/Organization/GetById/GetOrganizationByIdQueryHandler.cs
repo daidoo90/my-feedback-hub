@@ -3,7 +3,7 @@ using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Organization.GetById;
+namespace MyFeedbackHub.Application.Organization;
 
 public sealed record GetOrganizationByIdQuery(
     Guid OrganizationId);

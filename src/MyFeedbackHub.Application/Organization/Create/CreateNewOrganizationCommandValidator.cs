@@ -1,9 +1,8 @@
 ﻿using FluentValidation;
-using MyFeedbackHub.Application.Organization.Services;
-using MyFeedbackHub.Application.Users.Services;
+using MyFeedbackHub.Application.Users;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Organization.Create;
+namespace MyFeedbackHub.Application.Organization;
 
 public sealed class CreateNewOrganizationCommandValidator : AbstractValidator<CreateNewOrganizationCommand>
 {

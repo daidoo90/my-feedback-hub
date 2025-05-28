@@ -3,7 +3,7 @@ using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Project.GetById;
+namespace MyFeedbackHub.Application.Project;
 
 public sealed record GetProjectByIdQuery(Guid ProjectId);
 

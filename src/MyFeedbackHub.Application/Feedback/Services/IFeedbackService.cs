@@ -1,6 +1,7 @@
 ﻿using MyFeedbackHub.Domain.Feedback;
 
-namespace MyFeedbackHub.Application.Feedback.Services;
+namespace MyFeedbackHub.Application.Feedback;
+
 public interface IFeedbackService
 {
     Task<FeedbackDomain?> GetFeedbackByIdAsync(Guid feedbackId, CancellationToken cancellationToken = default);

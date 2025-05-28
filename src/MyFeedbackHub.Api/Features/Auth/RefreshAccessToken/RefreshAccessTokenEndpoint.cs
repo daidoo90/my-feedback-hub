@@ -2,7 +2,7 @@
 using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Application.Users.Services;
+using MyFeedbackHub.Application.Users;
 using MyFeedbackHub.SharedKernel.Results;
 
 namespace MyFeedbackHub.Api.Features.Auth.RefreshAccessToken;

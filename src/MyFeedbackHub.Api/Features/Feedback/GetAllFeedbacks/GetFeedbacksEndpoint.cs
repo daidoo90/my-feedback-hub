@@ -1,14 +1,14 @@
 ﻿using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
-using MyFeedbackHub.Application.Feedback.GetAllFeedbacks;
-using MyFeedbackHub.Application.Organization.Services;
+using MyFeedbackHub.Application.Feedback;
+using MyFeedbackHub.Application.Organization;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Application.Users.Services;
+using MyFeedbackHub.Application.Users;
 using MyFeedbackHub.Domain.Feedback;
 using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Api.Features.Feedback.GetAllFeedbacks;
+namespace MyFeedbackHub.Api.Features.Feedback;
 
 public class FeedbackResponseDto
 {
@@ -98,8 +98,8 @@ public sealed class GetFeedbacksEndpoint : ICarterModule
         })
             .WithName("GetFeedbacks")
             .Produces(StatusCodes.Status200OK)
-            .WithSummary("Get feedbacks")
-            .WithDescription("Get feedbacks")
+            .WithSummary("Get all feedbacks")
+            .WithDescription("Get all feedbacks")
             .WithTags("Feedback")
             .RequireAuthorization();
     }

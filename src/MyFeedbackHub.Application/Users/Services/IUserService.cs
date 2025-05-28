@@ -1,6 +1,6 @@
 ﻿using MyFeedbackHub.Domain.Organization;
 
-namespace MyFeedbackHub.Application.Users.Services;
+namespace MyFeedbackHub.Application.Users;
 
 public interface IUserService
 {

@@ -1,4 +1,4 @@
-﻿namespace MyFeedbackHub.Application.Users.Services;
+﻿namespace MyFeedbackHub.Application.Users;
 
 public interface IUserInvitationService
 {

@@ -4,7 +4,7 @@ using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Organization.Create;
+namespace MyFeedbackHub.Application.Organization;
 
 public sealed record CreateNewOrganizationCommand(
     string Username,

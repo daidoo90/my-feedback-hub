@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MyFeedbackHub.Application.Feedback.Services;
+using MyFeedbackHub.Application.Feedback;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Domain.Feedback;
 

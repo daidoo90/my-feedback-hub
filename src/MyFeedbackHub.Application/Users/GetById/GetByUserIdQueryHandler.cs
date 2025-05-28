@@ -3,7 +3,7 @@ using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Users.GetById;
+namespace MyFeedbackHub.Application.Users;
 
 public sealed record GetByUserIdQuery(Guid userId);
 

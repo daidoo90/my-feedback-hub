@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Organization.Update;
+namespace MyFeedbackHub.Application.Organization;
 
 public sealed record UpdateOrganizationCommand(
     string Name,

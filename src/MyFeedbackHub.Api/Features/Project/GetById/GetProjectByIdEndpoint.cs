@@ -1,12 +1,12 @@
 ﻿using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
-using MyFeedbackHub.Application.Project.GetById;
+using MyFeedbackHub.Application.Project;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Application.Users.Services;
+using MyFeedbackHub.Application.Users;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Domain.Types;
 
-namespace MyFeedbackHub.Api.Features.Project.GetById;
+namespace MyFeedbackHub.Api.Features.Project;
 
 public sealed class ProjectResponseDto
 {

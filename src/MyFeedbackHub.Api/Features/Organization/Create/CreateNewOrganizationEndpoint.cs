@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyFeedbackHub.Api.Shared.Utils;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
-using MyFeedbackHub.Application.Organization.Create;
+using MyFeedbackHub.Application.Organization;
 using MyFeedbackHub.Application.Shared.Abstractions;
 
-namespace MyFeedbackHub.Api.Features.Organization.Create;
+namespace MyFeedbackHub.Api.Features.Organization;
 
 public sealed record CreateNewOrganizationRequestDto(
     string Username,

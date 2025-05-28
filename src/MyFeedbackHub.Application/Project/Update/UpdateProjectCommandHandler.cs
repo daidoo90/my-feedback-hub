@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using MyFeedbackHub.Application.Feedback.GetFeedbackById;
+using MyFeedbackHub.Application.Feedback;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Project.Update;
+namespace MyFeedbackHub.Application.Project;
 
 public sealed record UpdateProjectCommand(
     Guid ProjectId,

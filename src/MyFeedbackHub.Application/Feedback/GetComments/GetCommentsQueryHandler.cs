@@ -2,7 +2,7 @@
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Feedback.GetComments;
+namespace MyFeedbackHub.Application.Feedback;
 
 public sealed record GetCommentsQuery(Guid FeedbackId);
 

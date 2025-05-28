@@ -4,14 +4,14 @@ using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Domain.Feedback;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Feedback.CreateComment;
+namespace MyFeedbackHub.Application.Feedback;
 
 public sealed record CreateNewCommentCommand(
     string Text,
     Guid FeedbackId,
     Guid? ParentCommentId);
 
-public sealed class CreateNewCommentCommandHandler(
+public sealed class AddCommentToFeedbackCommandHandler(
     IFeedbackHubDbContextFactory dbContextFactory,
     IUserContext currentUser,
     IAuthorizationService authorizationService,

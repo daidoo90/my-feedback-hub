@@ -2,7 +2,7 @@
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Feedback.UpdateComment;
+namespace MyFeedbackHub.Application.Feedback;
 
 public sealed record UpdateCommentCommand(
     Guid CommentId,

@@ -4,7 +4,7 @@ using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Feedback.Update;
+namespace MyFeedbackHub.Application.Feedback;
 
 public sealed record UpdateFeedbackCommand(
     Guid FeedbackId,

@@ -3,7 +3,7 @@ using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Domain.Feedback;
 using MyFeedbackHub.SharedKernel.Results;
 
-namespace MyFeedbackHub.Application.Feedback.GetAllFeedbacks;
+namespace MyFeedbackHub.Application.Feedback;
 
 public sealed record GetAllFeedbacksQuery(
     int? PageNumber,
