@@ -18,7 +18,7 @@ public sealed class UpdateCommentCommandHandler(
     {
         // TODO: Place validations here
 
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
 
         var comment = await dbContext.Comments
             .SingleOrDefaultAsync(c => c.CommentId == command.CommentId

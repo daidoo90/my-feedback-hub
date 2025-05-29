@@ -9,7 +9,7 @@ public sealed class OrganizationService(IFeedbackHubDbContextFactory hubDbContex
 {
     public async Task<IEnumerable<ProjectDomain>> GetAllProjectsAsync(Guid organizationId, CancellationToken cancellationToken = default)
     {
-        var dbContext = await hubDbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = hubDbContextFactory.Create();
 
         return await dbContext
             .Projects
@@ -20,7 +20,7 @@ public sealed class OrganizationService(IFeedbackHubDbContextFactory hubDbContex
 
     public async Task<OrganizationDomain?> GetAsync(string name, CancellationToken cancellationToken = default)
     {
-        var dbContext = await hubDbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = hubDbContextFactory.Create();
 
         return await dbContext
             .Organizations
@@ -31,7 +31,7 @@ public sealed class OrganizationService(IFeedbackHubDbContextFactory hubDbContex
 
     public async Task<OrganizationDomain?> GetAsync(Guid organizationId, CancellationToken cancellationToken = default)
     {
-        var dbContext = await hubDbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = hubDbContextFactory.Create();
 
         return await dbContext
             .Organizations
@@ -41,7 +41,7 @@ public sealed class OrganizationService(IFeedbackHubDbContextFactory hubDbContex
 
     public async Task<IEnumerable<Guid>> GetProjectsAsync(Guid organizationId, CancellationToken cancellationToken = default)
     {
-        var dbContext = await hubDbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = hubDbContextFactory.Create();
 
         return await dbContext.Projects
             .Where(p => p.OrganizationId == organizationId)

@@ -9,7 +9,7 @@ public sealed class FeedbackService(IFeedbackHubDbContextFactory dbContextFactor
 {
     public async Task<CommentDomain?> GetCommentByIdAsync(Guid commentId, CancellationToken cancellationToken = default)
     {
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
 
         return await dbContext
             .Comments
@@ -19,7 +19,7 @@ public sealed class FeedbackService(IFeedbackHubDbContextFactory dbContextFactor
 
     public async Task<FeedbackDomain?> GetFeedbackByIdAsync(Guid feedbackId, CancellationToken cancellationToken = default)
     {
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
 
         return await dbContext
             .Feedbacks

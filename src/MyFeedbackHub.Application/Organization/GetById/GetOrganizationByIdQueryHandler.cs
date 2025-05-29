@@ -13,7 +13,7 @@ public sealed class GetOrganizationByIdQueryHandler(
 {
     public async Task<ServiceDataResult<OrganizationDomain?>> HandleAsync(GetOrganizationByIdQuery query, CancellationToken cancellationToken = default)
     {
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
         var project = await dbContext
             .Organizations
             .Include(o => o.Projects)

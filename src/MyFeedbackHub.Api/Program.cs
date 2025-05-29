@@ -3,7 +3,6 @@ using MyFeedbackHub.Api.Shared;
 using MyFeedbackHub.Api.Shared.Registration;
 using MyFeedbackHub.Api.Shared.Utils.Carter;
 using MyFeedbackHub.Application.Shared.Abstractions;
-using MyFeedbackHub.Infrastructure.DAL.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,8 +31,9 @@ if (app.Environment.IsDevelopment())
 
 using (var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<IDbContextFactory<FeedbackHubDbContext>>();
-    dbContext.CreateDbContext().Database.Migrate();
+    var dbContext = scope.ServiceProvider.GetRequiredService<IFeedbackHubDbContextFactory>().Create();
+
+    dbContext.Database.Migrate();
 }
 
 app.UseWebSockets();

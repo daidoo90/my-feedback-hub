@@ -19,7 +19,7 @@ public sealed class GetProjectByIdQueryHandler(
             return ServiceDataResult<ProjectDomain>.WithError(ErrorCodes.Feedback.NotFound);
         }
 
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
         var project = await dbContext
             .Projects
             .AsNoTracking()

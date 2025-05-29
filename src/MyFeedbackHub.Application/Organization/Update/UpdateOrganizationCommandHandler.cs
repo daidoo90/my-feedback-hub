@@ -23,7 +23,7 @@ public sealed class UpdateOrganizationCommandHandler(
 {
     public async Task<ServiceResult> HandleAsync(UpdateOrganizationCommand command, CancellationToken cancellationToken = default)
     {
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
         var organization = await dbContext
             .Organizations
             .SingleOrDefaultAsync(o => o.OrganizationId == currentUser.OrganizationId, cancellationToken);

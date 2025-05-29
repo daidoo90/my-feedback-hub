@@ -13,7 +13,7 @@ public class DeleteFeedbackCommandHandler(
 {
     public async Task<ServiceResult> HandleAsync(DeleteFeedbackCommand command, CancellationToken cancellationToken = default)
     {
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
 
         var feedback = await dbContext.Feedbacks
             .SingleOrDefaultAsync(f => f.FeedbackId == command.FeedbackId

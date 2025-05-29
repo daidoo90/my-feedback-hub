@@ -5,7 +5,9 @@ using MyFeedbackHub.Application.Feedback;
 using MyFeedbackHub.Application.Organization;
 using MyFeedbackHub.Application.Project;
 using MyFeedbackHub.Application.Shared.Abstractions;
+using MyFeedbackHub.Application.Shared.Domains;
 using MyFeedbackHub.Application.Users;
+using MyFeedbackHub.Application.Users.SendWelcomeEmail;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Infrastructure.Services;
 
@@ -50,6 +52,10 @@ internal static class ApplicationDomain
         services.AddScoped<IAuthorizationService, AuthorizationService>();
 
         services.AddValidators();
+
+        services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+
+        services.AddScoped<IDomainEventHandler<UserCreatedDomainEvent>, SendWelcomeEmailEventHandler>();
 
         return services;
     }

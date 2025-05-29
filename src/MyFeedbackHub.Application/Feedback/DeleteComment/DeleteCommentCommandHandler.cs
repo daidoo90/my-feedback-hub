@@ -14,7 +14,7 @@ public sealed class DeleteCommentCommandHandler(
 {
     public async Task<ServiceResult> HandleAsync(DeleteCommentCommand command, CancellationToken cancellationToken = default)
     {
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
 
         var feedback = await dbContext
             .Feedbacks

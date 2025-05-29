@@ -21,7 +21,7 @@ public sealed class SetPasswordCommandHandler(
             return ServiceDataResult<CreateNewUserCommandResult>.WithError(validationResult.Errors.First().ErrorCode);
         }
 
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
         var user = await dbContext.Users
             .SingleAsync(u => u.Username == command.Username, cancellationToken);
 

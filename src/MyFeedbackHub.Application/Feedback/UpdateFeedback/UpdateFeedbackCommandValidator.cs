@@ -43,7 +43,7 @@ public sealed class UpdateFeedbackCommandValidator : AbstractValidator<UpdateFee
         RuleFor(x => x)
             .MustAsync(async (command, cancellationToken) =>
             {
-                var dbContext = await _dbContextFactory.CreateAsync(cancellationToken);
+                var dbContext = _dbContextFactory.Create();
                 var feedback = await dbContext.Feedbacks
                     .SingleOrDefaultAsync(f => f.FeedbackId == command.FeedbackId
                                                 && !f.IsDeleted,

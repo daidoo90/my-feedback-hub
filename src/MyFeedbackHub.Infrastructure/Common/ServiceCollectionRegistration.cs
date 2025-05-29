@@ -9,6 +9,8 @@ public static class ServiceCollectionRegistration
 {
     public static IServiceCollection AddInfra(this IServiceCollection services, string connectionString)
     {
+        services.AddScoped<IFeedbackHubDbContextFactory, FeedbackHubDbContextFactory>();
+
         services.AddDbContextFactory<FeedbackHubDbContext>(options =>
         {
             options.UseNpgsql(connectionString, options =>
@@ -19,8 +21,6 @@ public static class ServiceCollectionRegistration
             options.EnableSensitiveDataLogging();
             options.EnableDetailedErrors();
         });
-
-        services.AddScoped<IFeedbackHubDbContextFactory, FeedbackHubDbContextFactoryAdapter>();
 
         return services;
     }

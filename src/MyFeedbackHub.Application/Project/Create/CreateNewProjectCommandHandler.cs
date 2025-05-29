@@ -32,7 +32,7 @@ public sealed class CreateNewProjectCommandHandler(
             DateTimeOffset.UtcNow,
             currentUser.UserId);
 
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
         await dbContext.Projects.AddAsync(project, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);

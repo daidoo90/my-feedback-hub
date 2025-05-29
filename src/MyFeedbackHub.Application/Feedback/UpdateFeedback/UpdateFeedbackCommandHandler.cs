@@ -26,7 +26,7 @@ public sealed class UpdateFeedbackCommandHandler(
             return ServiceResult.WithError(validationResult.Errors.First().ErrorCode);
         }
 
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
         var feedback = await dbContext.Feedbacks
             .SingleAsync(f => f.FeedbackId == command.FeedbackId
                                         && !f.IsDeleted,

@@ -25,7 +25,7 @@ public sealed class GetAllFeedbacksQueryHandler(IFeedbackHubDbContextFactory dbC
         var pageNumber = query!.PageNumber.HasValue ? query.PageNumber.Value : 1;
         var pageSize = query!.PageSize.HasValue ? query.PageSize.Value : 10;
 
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
         var allFeedbacks = dbContext
             .Feedbacks
             .Where(f => query.projectIds.Contains(f.ProjectId) && !f.IsDeleted);

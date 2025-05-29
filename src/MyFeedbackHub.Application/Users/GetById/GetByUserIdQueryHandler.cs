@@ -12,7 +12,7 @@ public sealed class GetByUserIdQueryHandler(IFeedbackHubDbContextFactory dbConte
 {
     public async Task<ServiceDataResult<UserDomain>> HandleAsync(GetByUserIdQuery query, CancellationToken cancellationToken = default)
     {
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
         var user = await dbContext
             .Users
             .Include(u => u.ProjectAccess)

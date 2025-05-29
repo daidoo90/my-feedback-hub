@@ -48,7 +48,7 @@ public sealed class CreateNewOrganizationCommandHandler(
 
         organization.SetCreatedBy(user.UserId);
 
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
         await dbContext.Organizations.AddAsync(organization, cancellationToken);
         await dbContext.Users.AddAsync(user, cancellationToken);
         await dbContext.Projects.AddAsync(project, cancellationToken);

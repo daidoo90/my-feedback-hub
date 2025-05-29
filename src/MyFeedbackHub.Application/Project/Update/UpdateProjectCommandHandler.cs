@@ -32,7 +32,7 @@ public sealed class UpdateProjectCommandHandler(
             return ServiceResult.WithError(validationResult.Errors.First().ErrorCode);
         }
 
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
         var project = await dbContext
             .Projects
             .SingleOrDefaultAsync(p => p.ProjectId == command.ProjectId

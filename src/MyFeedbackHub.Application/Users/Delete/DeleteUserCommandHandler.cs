@@ -13,7 +13,7 @@ public sealed class DeleteUserCommandHandler(
 {
     public async Task<ServiceResult> HandleAsync(DeleteUserCommand command, CancellationToken cancellationToken = default)
     {
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
         var user = await dbContext
             .Users
             .SingleOrDefaultAsync(u => u.UserId == command.UserId

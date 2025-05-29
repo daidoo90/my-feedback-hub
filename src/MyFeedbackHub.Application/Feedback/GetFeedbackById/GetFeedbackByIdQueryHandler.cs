@@ -24,7 +24,7 @@ public sealed class GetFeedbackByIdQueryHandler(
 {
     public async Task<ServiceDataResult<GetFeedbackByIdResponse>> HandleAsync(GetFeedbackByIdQuery query, CancellationToken cancellationToken = default)
     {
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
 
         var feedback = await dbContext
             .Feedbacks

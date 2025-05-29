@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MyFeedbackHub.Application.Shared.Abstractions;
+using MyFeedbackHub.Application.Users.SendWelcomeEmail;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Domain.Types;
 using MyFeedbackHub.SharedKernel.Results;
@@ -46,7 +47,9 @@ public sealed class CreateNewUserCommandHandler(
             });
         }
 
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        newUser.AddDomainEvent(new UserCreatedDomainEvent(newUser));
+
+        var dbContext = dbContextFactory.Create();
         await dbContext.Users.AddAsync(newUser, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);

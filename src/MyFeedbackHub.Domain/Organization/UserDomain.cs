@@ -1,10 +1,11 @@
 ﻿using MyFeedbackHub.Domain.Feedback;
+using MyFeedbackHub.Domain.Shared.Domains;
 using MyFeedbackHub.Domain.Shared.Exceptions;
 using MyFeedbackHub.Domain.Types;
 
 namespace MyFeedbackHub.Domain.Organization;
 
-public sealed class UserDomain
+public sealed class UserDomain : BaseDomain
 {
     public Guid UserId { get; private set; }
 

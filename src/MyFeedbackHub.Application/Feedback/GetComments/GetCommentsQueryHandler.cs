@@ -23,7 +23,7 @@ public sealed class GetCommentsQueryHandler(
     {
         // TODO: Get feedback and validate that current user has access to this project
 
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
 
         var comments = await dbContext
             .Comments

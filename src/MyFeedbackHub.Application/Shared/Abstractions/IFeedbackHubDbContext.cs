@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using MyFeedbackHub.Domain.Feedback;
 using MyFeedbackHub.Domain.Organization;
 
@@ -13,10 +14,12 @@ public interface IFeedbackHubDbContext
     DbSet<FeedbackDomain> Feedbacks { get; }
     DbSet<CommentDomain> Comments { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+
+    DatabaseFacade Database { get; }
 }
 
 public interface IFeedbackHubDbContextFactory
 {
-    Task<IFeedbackHubDbContext> CreateAsync(CancellationToken cancellationToken = default);
+    IFeedbackHubDbContext Create();
 }
 

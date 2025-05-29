@@ -10,7 +10,7 @@ public sealed class UserService(
 {
     public async Task<UserDomain?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
         var user = await dbContext
         .Users
         .AsNoTracking()
@@ -21,7 +21,7 @@ public sealed class UserService(
 
     public async Task<IEnumerable<Guid>> GetProjectIdsAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
         return await dbContext.ProjectAccess
             .Where(pa => pa.UserId == userId)
             .Select(pa => pa.ProjectId)

@@ -10,6 +10,7 @@ public sealed class UserEntityConfiguration : IEntityTypeConfiguration<UserDomai
     public void Configure(EntityTypeBuilder<UserDomain> builder)
     {
         builder.ToTable(ConfiguratorConstants.Tables.User, ConfiguratorConstants.Schemas.Public);
+
         builder
             .HasKey(u => u.UserId);
 

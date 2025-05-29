@@ -26,7 +26,7 @@ public sealed class UpdateUserCommandHandler(
             return ServiceDataResult<CreateNewUserCommandResult>.WithError(validationResult.Errors.First().ErrorCode);
         }
 
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
         var user = await dbContext
             .Users
             .SingleAsync(u => u.UserId == command.UserId, cancellationToken);

@@ -1,11 +1,30 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using MyFeedbackHub.Application.Shared.Abstractions;
+using MyFeedbackHub.Application.Shared.Domains;
 
 namespace MyFeedbackHub.Infrastructure.DAL.Context;
 
-public sealed class FeedbackHubDbContextFactoryAdapter(IDbContextFactory<FeedbackHubDbContext> dbContextFactory)
-    : IFeedbackHubDbContextFactory
+public class FeedbackHubDbContextFactory : IDbContextFactory<FeedbackHubDbContext>, IFeedbackHubDbContextFactory
 {
-    public async Task<IFeedbackHubDbContext> CreateAsync(CancellationToken cancellationToken = default)
-        => await dbContextFactory.CreateDbContextAsync(cancellationToken);
+    private readonly IServiceProvider _provider;
+
+    public FeedbackHubDbContextFactory(IServiceProvider provider)
+    {
+        _provider = provider;
+    }
+
+    public FeedbackHubDbContext CreateDbContext()
+    {
+        var options = _provider.GetRequiredService<DbContextOptions<FeedbackHubDbContext>>();
+        var dispatcher = _provider.GetRequiredService<IDomainEventDispatcher>();
+        return new FeedbackHubDbContext(options, dispatcher);
+    }
+
+    public IFeedbackHubDbContext Create()
+    {
+        var options = _provider.GetRequiredService<DbContextOptions<FeedbackHubDbContext>>();
+        var dispatcher = _provider.GetRequiredService<IDomainEventDispatcher>();
+        return new FeedbackHubDbContext(options, dispatcher);
+    }
 }

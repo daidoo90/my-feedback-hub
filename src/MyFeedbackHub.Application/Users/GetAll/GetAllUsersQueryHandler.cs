@@ -24,7 +24,7 @@ public sealed class GetAllUsersQueryHandler(
         var pageNumber = query!.PageNumber.HasValue ? query.PageNumber.Value : 1;
         var pageSize = query!.PageSize.HasValue ? query.PageSize.Value : 10;
 
-        var dbContext = await dbContextFactory.CreateAsync(cancellationToken);
+        var dbContext = dbContextFactory.Create();
         var allUsers = dbContext
             .Users
             .Include(u => u.ProjectAccess)

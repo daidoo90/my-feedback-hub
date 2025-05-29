@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyFeedbackHub.Application.Shared.Abstractions;
+using MyFeedbackHub.Application.Shared.Domains;
 using MyFeedbackHub.Domain.Feedback;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Infrastructure.DAL.Configurators;
@@ -8,13 +9,24 @@ namespace MyFeedbackHub.Infrastructure.DAL.Context;
 
 public class FeedbackHubDbContext : DbContext, IFeedbackHubDbContext
 {
+    private IDomainEventDispatcher _domainEventDispatcher;
+
     public FeedbackHubDbContext()
     {
 
     }
 
-    public FeedbackHubDbContext(DbContextOptions options) : base(options)
+    public FeedbackHubDbContext(DbContextOptions options)
+        : base(options)
     {
+    }
+
+    public FeedbackHubDbContext(
+        DbContextOptions options,
+        IDomainEventDispatcher domainEventDispatcher)
+        : this(options)
+    {
+        _domainEventDispatcher = domainEventDispatcher;
     }
 
     public DbSet<OrganizationDomain> Organizations { get; set; }
@@ -28,5 +40,24 @@ public class FeedbackHubDbContext : DbContext, IFeedbackHubDbContext
     {
         base.OnModelCreating(builder);
         builder.ApplyConfigurationsFromAssembly(typeof(IEntityConfiguration).Assembly);
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var domainEvents = ChangeTracker.Entries<UserDomain>()
+            .Where(e => e.Entity.DomainEvents.Any())
+            .SelectMany(e => e.Entity.DomainEvents)
+            .ToList();
+
+        var result = await base.SaveChangesAsync(cancellationToken);
+
+        // Sending domain events
+        await _domainEventDispatcher.DispatchAsync(domainEvents, cancellationToken);
+
+        // Clear domain events
+        foreach (var entry in ChangeTracker.Entries<UserDomain>())
+            entry.Entity.ClearDomainEvents();
+
+        return result;
     }
 }
