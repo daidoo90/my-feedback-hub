@@ -2,24 +2,20 @@
 
 public class ServiceResult
 {
-    public ServiceResult(ResultType resultType = ResultType.SuccessOrError)
+    public ServiceResult()
     {
         IsSuccessful = true;
-        ResultType = resultType;
     }
 
-    public ServiceResult(string errorCode, ResultType resultType = ResultType.SuccessOrError)
+    public ServiceResult(string errorCode)
     {
         ErrorCode = errorCode;
         IsSuccessful = false;
-        ResultType = resultType;
     }
 
     public bool IsSuccessful { get; }
 
     public string ErrorCode { get; }
-
-    public ResultType ResultType { get; }
 
     public static ServiceResult Success => new();
 

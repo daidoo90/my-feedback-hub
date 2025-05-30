@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.SharedKernel.Results;
@@ -24,17 +25,22 @@ public sealed class CreateNewProjectCommandHandler(
             return ServiceResult.WithError(validationResult.Errors.First().ErrorCode);
         }
 
-        var project = ProjectDomain.Create(
+        var dbContext = dbContextFactory.Create();
+
+        var organization = await dbContext
+            .Organizations
+            .Include(o => o.Projects)
+            .SingleAsync(x => x.OrganizationId == currentUser.OrganizationId, cancellationToken: cancellationToken);
+
+        var newProject = ProjectDomain.Create(
             command.Name,
-            currentUser.OrganizationId,
+            organization.OrganizationId,
             command.Url,
             command.Description,
             DateTimeOffset.UtcNow,
             currentUser.UserId);
 
-        var dbContext = dbContextFactory.Create();
-        await dbContext.Projects.AddAsync(project, cancellationToken);
-
+        organization.AddProject(newProject);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return ServiceResult.Success;

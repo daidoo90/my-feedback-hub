@@ -3,13 +3,14 @@ using MyFeedbackHub.Application.Shared.Abstractions;
 using MyFeedbackHub.Application.Shared.Domains;
 using MyFeedbackHub.Domain.Feedback;
 using MyFeedbackHub.Domain.Organization;
+using MyFeedbackHub.Domain.Shared.Domains;
 using MyFeedbackHub.Infrastructure.DAL.Configurators;
 
 namespace MyFeedbackHub.Infrastructure.DAL.Context;
 
 public class FeedbackHubDbContext : DbContext, IFeedbackHubDbContext
 {
-    private IDomainEventDispatcher _domainEventDispatcher;
+    private readonly IDomainEventDispatcher _domainEventDispatcher;
 
     public FeedbackHubDbContext()
     {
@@ -44,7 +45,7 @@ public class FeedbackHubDbContext : DbContext, IFeedbackHubDbContext
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        var domainEvents = ChangeTracker.Entries<UserDomain>()
+        var domainEvents = ChangeTracker.Entries<BaseDomain>()
             .Where(e => e.Entity.DomainEvents.Any())
             .SelectMany(e => e.Entity.DomainEvents)
             .ToList();
@@ -55,7 +56,7 @@ public class FeedbackHubDbContext : DbContext, IFeedbackHubDbContext
         await _domainEventDispatcher.DispatchAsync(domainEvents, cancellationToken);
 
         // Clear domain events
-        foreach (var entry in ChangeTracker.Entries<UserDomain>())
+        foreach (var entry in ChangeTracker.Entries<BaseDomain>())
             entry.Entity.ClearDomainEvents();
 
         return result;

@@ -47,7 +47,6 @@ public sealed class AddCommentToFeedbackCommandHandler(
 
         feedback.AddComment(newComment);
 
-        await dbContext.Comments.AddAsync(newComment, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return ServiceResult.Success;

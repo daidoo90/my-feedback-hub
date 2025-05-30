@@ -47,7 +47,6 @@ public sealed class ProjectDomain
     {
         return new ProjectDomain
         {
-            ProjectId = Guid.NewGuid(),
             Name = name,
             OrganizationId = organizationId,
             Url = url,

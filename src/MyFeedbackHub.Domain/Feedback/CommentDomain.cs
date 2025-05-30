@@ -41,7 +41,6 @@ public sealed class CommentDomain
 
         return new CommentDomain
         {
-            CommentId = Guid.NewGuid(),
             Text = text,
             FeedbackId = feedbackId,
             ParentCommentId = parentCommentId,

@@ -63,4 +63,9 @@ public sealed class OrganizationDomain
     {
         CreatedByUserId = userId;
     }
+
+    public void AddProject(ProjectDomain project)
+    {
+        Projects.Add(project);
+    }
 }
