@@ -31,4 +31,8 @@
     <ProjectReference Include="..\MyFeedbackHub.SharedKernel\MyFeedbackHub.SharedKernel.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Organization\Delete\" />
+  </ItemGroup>
+
 </Project>

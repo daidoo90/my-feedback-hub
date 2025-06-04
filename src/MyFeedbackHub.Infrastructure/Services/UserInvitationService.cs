@@ -6,18 +6,17 @@ namespace MyFeedbackHub.Infrastructure.Services;
 public sealed class UserInvitationService(IDistributedCache cache)
     : IUserInvitationService
 {
-    public async Task<string?> GetUserByInvitationTokenAsync(string token, CancellationToken cancellationToken = default)
+    public async Task<string?> GetInvitationTokenAsync(string username, CancellationToken cancellationToken = default)
     {
-        var key = $"invite:{token}";
-        var username = await cache.GetStringAsync(key, cancellationToken);
+        var key = $"invitation-token:{username}";
 
-        return username;
+        return await cache.GetStringAsync(key, cancellationToken);
     }
 
     public async Task<string> GenerateAndStoreInvitationTokenAsync(string username, CancellationToken cancellationToken = default)
     {
         var token = Guid.NewGuid().ToString();
-        var key = $"invite:{token}";
+        var key = $"invitation-token:{username}";
 
         await cache.SetStringAsync(key, username, new DistributedCacheEntryOptions
         {

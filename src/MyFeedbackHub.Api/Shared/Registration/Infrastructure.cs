@@ -10,6 +10,8 @@ internal static class Infrastructure
 {
     internal static IServiceCollection AddInfrastructure(this IServiceCollection services, WebApplicationBuilder builder)
     {
+        services.AddEmail(builder);
+
         services.AddDb(builder);
 
         services.AddRedis(builder);
@@ -51,6 +53,19 @@ internal static class Infrastructure
             options.Configuration = redisSettings.ConnectionString;
             options.InstanceName = redisSettings.InstanceName;
         });
+
+        return services;
+    }
+
+    private static IServiceCollection AddEmail(this IServiceCollection services, WebApplicationBuilder builder)
+    {
+        builder.Services
+            .AddOptions<EmailConfigurations>()
+            .BindConfiguration(EmailConfigurations.ConfigurationName)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services.AddScoped<IEmailService, EmailService>();
 
         return services;
     }

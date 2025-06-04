@@ -2,15 +2,11 @@
 
 public class ServiceResult
 {
-    public ServiceResult()
-    {
-        IsSuccessful = true;
-    }
+    protected ServiceResult() => IsSuccessful = true;
 
-    public ServiceResult(string errorCode)
+    protected ServiceResult(string errorCode)
     {
         ErrorCode = errorCode;
-        IsSuccessful = false;
     }
 
     public bool IsSuccessful { get; }

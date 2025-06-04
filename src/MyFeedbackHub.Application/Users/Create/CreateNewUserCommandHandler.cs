@@ -54,7 +54,7 @@ public sealed class CreateNewUserCommandHandler(
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        var invitationToken = await userInvitationService.GenerateAndStoreInvitationTokenAsync(newUser.Username, cancellationToken);
+        var invitationToken = await userInvitationService.GetInvitationTokenAsync(newUser.Username, cancellationToken);
 
         return ServiceDataResult<CreateNewUserCommandResult>.WithData(new CreateNewUserCommandResult(invitationToken));
     }

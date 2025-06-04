@@ -11,10 +11,17 @@ public sealed class UserCreatedDomainEvent : BaseDomainEvent
     public UserCreatedDomainEvent(UserDomain user) => User = user;
 }
 
-public sealed class SendWelcomeEmailEventHandler : IDomainEventHandler<UserCreatedDomainEvent>
+public sealed class SendWelcomeEmailEventHandler(
+    IEmailService _emailService,
+    IUserInvitationService _userInvitationService) : IDomainEventHandler<UserCreatedDomainEvent>
 {
-    public Task HandleAsync(UserCreatedDomainEvent domainEvent, CancellationToken cancellationToken = default)
+    public async Task HandleAsync(UserCreatedDomainEvent @event, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var newUserEmail = @event.User.Username;
+
+        var token = await _userInvitationService.GenerateAndStoreInvitationTokenAsync(newUserEmail, cancellationToken);
+
+        return;
+        //await _emailService.SendEmailAsync(newUserEmail, "Welcome", $"Your invitation token: {token}");
     }
 }
