@@ -56,7 +56,6 @@ public sealed class UpdateOrganizationEndpoint : ICarterModule
         .Produces(StatusCodes.Status400BadRequest)
         .WithSummary("Update organization")
         .WithDescription("Update organization")
-        .WithTags("Organization")
-        .AllowAnonymous();
+        .WithTags("Organization");
     }
 }

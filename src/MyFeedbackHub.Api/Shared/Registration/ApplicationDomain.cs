@@ -21,6 +21,7 @@ internal static class ApplicationDomain
         services.AddScoped<ICommandHandler<CreateNewOrganizationCommand>, CreateNewOrganizationCommandHandler>();
         services.AddScoped<IQueryHandler<GetOrganizationByIdQuery, OrganizationDomain?>, GetOrganizationByIdQueryHandler>();
         services.AddScoped<ICommandHandler<UpdateOrganizationCommand>, UpdateOrganizationCommandHandler>();
+        services.AddScoped<ICommandHandler<DeleteOrganizationCommand>, DeleteOrganizationCommandHandler>();
 
         services.AddScoped<IQueryHandler<GetByUserIdQuery, UserDomain>, GetByUserIdQueryHandler>();
         services.AddScoped<IQueryHandler<GetAllUsersQuery, GetAllUsersResponse>, GetAllUsersQueryHandler>();

@@ -5,8 +5,7 @@ using MyFeedbackHub.SharedKernel.Results;
 
 namespace MyFeedbackHub.Application.Organization;
 
-public sealed record GetOrganizationByIdQuery(
-    Guid OrganizationId);
+public sealed record GetOrganizationByIdQuery(Guid OrganizationId);
 
 public sealed class GetOrganizationByIdQueryHandler(
     IFeedbackHubDbContextFactory dbContextFactory) : IQueryHandler<GetOrganizationByIdQuery, OrganizationDomain?>

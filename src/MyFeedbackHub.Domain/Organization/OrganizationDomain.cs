@@ -68,4 +68,12 @@ public sealed class OrganizationDomain
     {
         Projects.Add(project);
     }
+
+    public void Delete(
+        Guid byUserId)
+    {
+        IsDeleted = true;
+        DeletedOn = DateTimeOffset.UtcNow;
+        DeletedByUserId = byUserId;
+    }
 }
