@@ -17,21 +17,20 @@ public sealed record GetFeedbackByIdResponse(
     string CreatedBy);
 
 public sealed class GetFeedbackByIdQueryHandler(
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     IUserContext currentUser,
     IAuthorizationService authorizationService)
     : IQueryHandler<GetFeedbackByIdQuery, GetFeedbackByIdResponse>
 {
     public async Task<ServiceDataResult<GetFeedbackByIdResponse>> HandleAsync(GetFeedbackByIdQuery query, CancellationToken cancellationToken = default)
     {
-        var dbContext = dbContextFactory.Create();
-
-        var feedback = await dbContext
+        var feedback = await unitOfWork
+            .DbContext
             .Feedbacks
             .Include(f => f.Comments)
             .Where(f => f.FeedbackId == query.FeedbackId
                         && !f.IsDeleted)
-            .Join(dbContext.Users,
+            .Join(unitOfWork.DbContext.Users,
                 feedback => feedback.CreatedBy,
                 user => user.UserId,
                 (feedback, user) => new

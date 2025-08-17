@@ -13,7 +13,7 @@ public sealed record CreateNewFeedbackCommand(
     Guid ProjectId);
 
 public sealed class AddFeedbackCommandHandler(
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     IUserContext currentUser,
     IValidator<CreateNewFeedbackCommand> validator)
     : ICommandHandler<CreateNewFeedbackCommand>
@@ -26,8 +26,6 @@ public sealed class AddFeedbackCommandHandler(
             return ServiceResult.WithError(validationResult.Errors.First().ErrorCode);
         }
 
-        var dbContext = dbContextFactory.Create();
-
         var newFeedback = FeedbackDomain.Create(
             command.Title,
             command.Description,
@@ -36,8 +34,8 @@ public sealed class AddFeedbackCommandHandler(
             DateTimeOffset.UtcNow,
             currentUser.UserId);
 
-        await dbContext.Feedbacks.AddAsync(newFeedback, cancellationToken);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await unitOfWork.DbContext.Feedbacks.AddAsync(newFeedback, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return ServiceResult.Success;
     }

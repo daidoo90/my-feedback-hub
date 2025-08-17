@@ -15,7 +15,7 @@ public sealed record GetAllUsersResponse(
     IEnumerable<UserDomain> Users);
 
 public sealed class GetAllUsersQueryHandler(
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     IUserContext currentUser)
     : IQueryHandler<GetAllUsersQuery, GetAllUsersResponse>
 {
@@ -24,8 +24,8 @@ public sealed class GetAllUsersQueryHandler(
         var pageNumber = query!.PageNumber.HasValue ? query.PageNumber.Value : 1;
         var pageSize = query!.PageSize.HasValue ? query.PageSize.Value : 10;
 
-        var dbContext = dbContextFactory.Create();
-        var allUsers = dbContext
+        var allUsers = unitOfWork
+            .DbContext
             .Users
             .Include(u => u.ProjectAccess)
             .ThenInclude(pa => pa.Project)

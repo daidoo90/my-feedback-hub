@@ -65,24 +65,3 @@ public class FeedbackHubDbContext : DbContext, IFeedbackHubDbContext
         return result;
     }
 }
-
-public class UnitOfWork : IUnitOfWork
-{
-    private readonly FeedbackHubDbContext _dbContext;
-
-    public UnitOfWork(IDbContextFactory<FeedbackHubDbContext> contextFactory)
-    {
-        _dbContext = contextFactory.CreateDbContext();
-    }
-
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        return await _dbContext.SaveChangesAsync(cancellationToken);
-    }
-
-    public void Dispose() => _dbContext.Dispose();
-
-    public ValueTask DisposeAsync() => _dbContext.DisposeAsync();
-
-    public IFeedbackHubDbContext DbContext => _dbContext;
-}

@@ -10,7 +10,7 @@ public sealed record UpdateCommentCommand(
     string Text);
 
 public sealed class UpdateCommentCommandHandler(
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     IUserContext currentUser)
     : ICommandHandler<UpdateCommentCommand>
 {
@@ -18,9 +18,7 @@ public sealed class UpdateCommentCommandHandler(
     {
         // TODO: Place validations here
 
-        var dbContext = dbContextFactory.Create();
-
-        var comment = await dbContext.Comments
+        var comment = await unitOfWork.DbContext.Comments
             .SingleOrDefaultAsync(c => c.CommentId == command.CommentId
                                         && c.FeedbackId == command.FeedbackId, cancellationToken);
 
@@ -36,7 +34,7 @@ public sealed class UpdateCommentCommandHandler(
             DateTimeOffset.UtcNow,
             currentUser.UserId);
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return ServiceResult.Success;
     }

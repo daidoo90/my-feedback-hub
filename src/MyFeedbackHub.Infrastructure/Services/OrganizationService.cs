@@ -5,13 +5,12 @@ using MyFeedbackHub.Domain.Organization;
 
 namespace MyFeedbackHub.Infrastructure.Services;
 
-public sealed class OrganizationService(IFeedbackHubDbContextFactory hubDbContextFactory) : IOrganizationService
+public sealed class OrganizationService(IUnitOfWork unitOfWork) : IOrganizationService
 {
     public async Task<IEnumerable<ProjectDomain>> GetAllProjectsAsync(Guid organizationId, CancellationToken cancellationToken = default)
     {
-        var dbContext = hubDbContextFactory.Create();
-
-        return await dbContext
+        return await unitOfWork
+            .DbContext
             .Projects
             .AsNoTracking()
             .Where(p => p.OrganizationId == organizationId)
@@ -20,9 +19,8 @@ public sealed class OrganizationService(IFeedbackHubDbContextFactory hubDbContex
 
     public async Task<OrganizationDomain?> GetAsync(string name, CancellationToken cancellationToken = default)
     {
-        var dbContext = hubDbContextFactory.Create();
-
-        return await dbContext
+        return await unitOfWork
+            .DbContext
             .Organizations
             .AsNoTracking()
             .Where(p => p.Name.ToLower().Equals(name.ToLower()))
@@ -31,9 +29,8 @@ public sealed class OrganizationService(IFeedbackHubDbContextFactory hubDbContex
 
     public async Task<OrganizationDomain?> GetAsync(Guid organizationId, CancellationToken cancellationToken = default)
     {
-        var dbContext = hubDbContextFactory.Create();
-
-        return await dbContext
+        return await unitOfWork
+            .DbContext
             .Organizations
             .AsNoTracking()
             .SingleOrDefaultAsync(p => p.OrganizationId == organizationId, cancellationToken);
@@ -41,9 +38,9 @@ public sealed class OrganizationService(IFeedbackHubDbContextFactory hubDbContex
 
     public async Task<IEnumerable<Guid>> GetProjectsAsync(Guid organizationId, CancellationToken cancellationToken = default)
     {
-        var dbContext = hubDbContextFactory.Create();
-
-        return await dbContext.Projects
+        return await unitOfWork
+            .DbContext
+            .Projects
             .Where(p => p.OrganizationId == organizationId)
             .AsNoTracking()
             .Select(p => p.ProjectId)

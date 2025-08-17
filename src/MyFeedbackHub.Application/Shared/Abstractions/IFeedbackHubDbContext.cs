@@ -23,15 +23,3 @@ public interface IFeedbackHubDbContext
 
     DatabaseFacade Database { get; }
 }
-
-public interface IFeedbackHubDbContextFactory
-{
-    IFeedbackHubDbContext Create();
-}
-
-public interface IUnitOfWork : IDisposable, IAsyncDisposable
-{
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
-
-    IFeedbackHubDbContext DbContext { get; }
-}

@@ -13,7 +13,7 @@ public sealed record UpdateUserCommand(
     string PhoneNumber);
 
 public sealed class UpdateUserCommandHandler(
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     IUserContext currentUser,
     IValidator<UpdateUserCommand> validator)
     : ICommandHandler<UpdateUserCommand>
@@ -26,8 +26,8 @@ public sealed class UpdateUserCommandHandler(
             return ServiceDataResult<CreateNewUserCommandResult>.WithError(validationResult.Errors.First().ErrorCode);
         }
 
-        var dbContext = dbContextFactory.Create();
-        var user = await dbContext
+        var user = await unitOfWork
+            .DbContext
             .Users
             .SingleAsync(u => u.UserId == command.UserId, cancellationToken);
 
@@ -38,7 +38,7 @@ public sealed class UpdateUserCommandHandler(
             DateTimeOffset.UtcNow,
             currentUser.UserId);
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return ServiceResult.Success;
     }

@@ -7,13 +7,13 @@ namespace MyFeedbackHub.Application.Users;
 
 public sealed record GetByUserIdQuery(Guid userId);
 
-public sealed class GetByUserIdQueryHandler(IFeedbackHubDbContextFactory dbContextFactory)
+public sealed class GetByUserIdQueryHandler(IUnitOfWork unitOfWork)
     : IQueryHandler<GetByUserIdQuery, UserDomain>
 {
     public async Task<ServiceDataResult<UserDomain>> HandleAsync(GetByUserIdQuery query, CancellationToken cancellationToken = default)
     {
-        var dbContext = dbContextFactory.Create();
-        var user = await dbContext
+        var user = await unitOfWork
+            .DbContext
             .Users
             .Include(u => u.ProjectAccess)
             .ThenInclude(pa => pa.Project)

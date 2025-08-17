@@ -13,7 +13,7 @@ public sealed record CreateNewOrganizationCommand(
 
 public sealed class CreateNewOrganizationCommandHandler(
     IValidator<CreateNewOrganizationCommand> validator,
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     ICryptoService cryptoService)
     : ICommandHandler<CreateNewOrganizationCommand>
 {
@@ -48,12 +48,11 @@ public sealed class CreateNewOrganizationCommandHandler(
 
         organization.SetCreatedBy(user.UserId);
 
-        var dbContext = dbContextFactory.Create();
-        await dbContext.Organizations.AddAsync(organization, cancellationToken);
-        await dbContext.Users.AddAsync(user, cancellationToken);
-        await dbContext.Projects.AddAsync(project, cancellationToken);
+        await unitOfWork.DbContext.Organizations.AddAsync(organization, cancellationToken);
+        await unitOfWork.DbContext.Users.AddAsync(user, cancellationToken);
+        await unitOfWork.DbContext.Projects.AddAsync(project, cancellationToken);
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return ServiceResult.Success;
     }

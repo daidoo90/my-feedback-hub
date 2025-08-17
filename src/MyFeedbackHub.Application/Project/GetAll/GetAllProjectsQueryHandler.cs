@@ -16,7 +16,7 @@ public sealed record GetAllProjectsResponse(
     IEnumerable<ProjectDomain> Projects);
 
 public sealed class GetAllProjectsQueryHandler(
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     IUserContext userContext) : IQueryHandler<GetAllProjectsQuery, GetAllProjectsResponse>
 {
     public async Task<ServiceDataResult<GetAllProjectsResponse>> HandleAsync(GetAllProjectsQuery query, CancellationToken cancellationToken = default)
@@ -24,8 +24,8 @@ public sealed class GetAllProjectsQueryHandler(
         var pageNumber = query!.PageNumber.HasValue ? query.PageNumber.Value : 1;
         var pageSize = query!.PageSize.HasValue ? query.PageSize.Value : 10;
 
-        var dbContext = dbContextFactory.Create();
-        var allProjects = dbContext
+        var allProjects = unitOfWork
+            .DbContext
             .Projects
             .Where(p => p.OrganizationId == userContext.OrganizationId
                         && (!query.ProjectIds.Any() || query.ProjectIds.Contains(p.ProjectId)));

@@ -13,7 +13,7 @@ public sealed record UpdateFeedbackCommand(
     FeedbackStatusType Status);
 
 public sealed class UpdateFeedbackCommandHandler(
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     IUserContext currentUser,
     IValidator<UpdateFeedbackCommand> validator)
     : ICommandHandler<UpdateFeedbackCommand>
@@ -26,8 +26,7 @@ public sealed class UpdateFeedbackCommandHandler(
             return ServiceResult.WithError(validationResult.Errors.First().ErrorCode);
         }
 
-        var dbContext = dbContextFactory.Create();
-        var feedback = await dbContext.Feedbacks
+        var feedback = await unitOfWork.DbContext.Feedbacks
             .SingleAsync(f => f.FeedbackId == command.FeedbackId
                                         && !f.IsDeleted,
                                         cancellationToken);
@@ -39,7 +38,7 @@ public sealed class UpdateFeedbackCommandHandler(
             DateTimeOffset.UtcNow,
             currentUser.UserId);
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return ServiceResult.Success;
     }

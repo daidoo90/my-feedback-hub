@@ -5,13 +5,12 @@ using MyFeedbackHub.Domain.Feedback;
 
 namespace MyFeedbackHub.Infrastructure.Services;
 
-public sealed class FeedbackService(IFeedbackHubDbContextFactory dbContextFactory) : IFeedbackService
+public sealed class FeedbackService(IUnitOfWork unitOfWork) : IFeedbackService
 {
     public async Task<CommentDomain?> GetCommentByIdAsync(Guid commentId, CancellationToken cancellationToken = default)
     {
-        var dbContext = dbContextFactory.Create();
-
-        return await dbContext
+        return await unitOfWork
+            .DbContext
             .Comments
             .AsNoTracking()
             .SingleOrDefaultAsync(c => c.CommentId == commentId, cancellationToken);
@@ -19,9 +18,9 @@ public sealed class FeedbackService(IFeedbackHubDbContextFactory dbContextFactor
 
     public async Task<FeedbackDomain?> GetFeedbackByIdAsync(Guid feedbackId, CancellationToken cancellationToken = default)
     {
-        var dbContext = dbContextFactory.Create();
 
-        return await dbContext
+        return await unitOfWork
+            .DbContext
             .Feedbacks
             .Include(f => f.Comments)
             .SingleOrDefaultAsync(c => c.FeedbackId == feedbackId, cancellationToken);

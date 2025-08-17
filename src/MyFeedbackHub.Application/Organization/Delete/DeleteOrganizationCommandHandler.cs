@@ -7,7 +7,7 @@ namespace MyFeedbackHub.Application.Organization;
 public sealed record DeleteOrganizationCommand(Guid OrganizationId);
 
 public sealed class DeleteOrganizationCommandHandler(
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     IUserContext currentUser)
     : ICommandHandler<DeleteOrganizationCommand>
 {
@@ -15,8 +15,8 @@ public sealed class DeleteOrganizationCommandHandler(
         DeleteOrganizationCommand command,
         CancellationToken cancellationToken = default)
     {
-        var dbContext = dbContextFactory.Create();
-        var organization = await dbContext
+        var organization = await unitOfWork
+            .DbContext
             .Organizations
             .SingleOrDefaultAsync(x => x.OrganizationId == command.OrganizationId
                                     && x.OrganizationId == currentUser.OrganizationId, cancellationToken);
@@ -27,7 +27,8 @@ public sealed class DeleteOrganizationCommandHandler(
 
         organization.Delete(currentUser.UserId);
 
-        var projects = await dbContext
+        var projects = await unitOfWork
+            .DbContext
             .Projects
             .Where(p => p.OrganizationId == command.OrganizationId)
             .ToListAsync(cancellationToken);
@@ -37,7 +38,7 @@ public sealed class DeleteOrganizationCommandHandler(
             project.Delete(currentUser.UserId);
         }
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return ServiceResult.Success;
     }

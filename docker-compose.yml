@@ -51,6 +51,19 @@ services:
     networks:
       - myfeedbackhub-network
 
+  myfeedbackhub.background.services:
+    container_name: myfeedbackhub-background-services
+    build:
+      context: .
+      dockerfile: src/MyFeedbackHub.BackgroundServices/Dockerfile
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    depends_on:
+      - myfeedbackhub.rabbitmq
+    restart: always
+    networks:
+      - myfeedbackhub-network
+
 networks:
   myfeedbackhub-network:
     name: myfeedbackhub-network

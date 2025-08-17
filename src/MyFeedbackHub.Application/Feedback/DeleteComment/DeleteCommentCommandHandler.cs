@@ -7,16 +7,15 @@ namespace MyFeedbackHub.Application.Feedback;
 public sealed record DeleteCommentCommand(Guid CommentId, Guid FeedbackId);
 
 public sealed class DeleteCommentCommandHandler(
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     IUserContext currentUser,
     IAuthorizationService authorizationService)
     : ICommandHandler<DeleteCommentCommand>
 {
     public async Task<ServiceResult> HandleAsync(DeleteCommentCommand command, CancellationToken cancellationToken = default)
     {
-        var dbContext = dbContextFactory.Create();
-
-        var feedback = await dbContext
+        var feedback = await unitOfWork
+            .DbContext
             .Feedbacks
             .Include(f => f.Comments)
             .SingleOrDefaultAsync(c => c.FeedbackId == command.FeedbackId, cancellationToken);
@@ -42,7 +41,7 @@ public sealed class DeleteCommentCommandHandler(
 
         feedback.DeleteComment(command.CommentId, currentUser.UserId);
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return ServiceResult.Success;
     }

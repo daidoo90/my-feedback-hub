@@ -12,7 +12,7 @@ public sealed record CreateNewProjectCommand(
     string Description);
 
 public sealed class CreateNewProjectCommandHandler(
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     IUserContext currentUser,
     IValidator<CreateNewProjectCommand> validator)
     : ICommandHandler<CreateNewProjectCommand>
@@ -25,9 +25,8 @@ public sealed class CreateNewProjectCommandHandler(
             return ServiceResult.WithError(validationResult.Errors.First().ErrorCode);
         }
 
-        var dbContext = dbContextFactory.Create();
-
-        var organization = await dbContext
+        var organization = await unitOfWork
+            .DbContext
             .Organizations
             .Include(o => o.Projects)
             .SingleAsync(x => x.OrganizationId == currentUser.OrganizationId, cancellationToken: cancellationToken);
@@ -41,7 +40,8 @@ public sealed class CreateNewProjectCommandHandler(
             currentUser.UserId);
 
         organization.AddProject(newProject);
-        await dbContext.SaveChangesAsync(cancellationToken);
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return ServiceResult.Success;
     }

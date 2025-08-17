@@ -6,12 +6,13 @@ using MyFeedbackHub.Domain.Organization;
 namespace MyFeedbackHub.Infrastructure.Services;
 
 public sealed class UserService(
-    IFeedbackHubDbContextFactory dbContextFactory) : IUserService
+    IUnitOfWork unitOfWork)
+    : IUserService
 {
     public async Task<UserDomain?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
-        var dbContext = dbContextFactory.Create();
-        var user = await dbContext
+        var user = await unitOfWork
+        .DbContext
         .Users
         .AsNoTracking()
         .FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
@@ -21,8 +22,9 @@ public sealed class UserService(
 
     public async Task<IEnumerable<Guid>> GetProjectIdsAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        var dbContext = dbContextFactory.Create();
-        return await dbContext.ProjectAccess
+        return await unitOfWork
+            .DbContext
+            .ProjectAccess
             .Where(pa => pa.UserId == userId)
             .Select(pa => pa.ProjectId)
             .ToListAsync(cancellationToken);

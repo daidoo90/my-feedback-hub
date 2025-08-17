@@ -15,7 +15,7 @@ public sealed record GetAllFeedbacksResponse(
     IEnumerable<FeedbackDomain> Feedbacks);
 
 
-public sealed class GetAllFeedbacksQueryHandler(IFeedbackHubDbContextFactory dbContextFactory)
+public sealed class GetAllFeedbacksQueryHandler(IUnitOfWork unitOfWork)
     : IQueryHandler<GetAllFeedbacksQuery, GetAllFeedbacksResponse>
 {
     public async Task<ServiceDataResult<GetAllFeedbacksResponse>> HandleAsync(
@@ -25,8 +25,8 @@ public sealed class GetAllFeedbacksQueryHandler(IFeedbackHubDbContextFactory dbC
         var pageNumber = query!.PageNumber.HasValue ? query.PageNumber.Value : 1;
         var pageSize = query!.PageSize.HasValue ? query.PageSize.Value : 10;
 
-        var dbContext = dbContextFactory.Create();
-        var allFeedbacks = dbContext
+        var allFeedbacks = unitOfWork
+            .DbContext
             .Feedbacks
             .Where(f => query.projectIds.Contains(f.ProjectId) && !f.IsDeleted);
 

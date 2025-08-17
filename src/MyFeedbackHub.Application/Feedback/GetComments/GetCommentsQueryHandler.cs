@@ -15,7 +15,7 @@ public sealed record CommentResponse(
     string CreatedBy);
 
 public sealed class GetCommentsQueryHandler(
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     IUserContext currentUser)
     : IQueryHandler<GetCommentsQuery, IEnumerable<CommentResponse>>
 {
@@ -23,14 +23,13 @@ public sealed class GetCommentsQueryHandler(
     {
         // TODO: Get feedback and validate that current user has access to this project
 
-        var dbContext = dbContextFactory.Create();
-
-        var comments = await dbContext
+        var comments = await unitOfWork
+            .DbContext
             .Comments
             .Where(c => c.FeedbackId == query.FeedbackId
                         && !c.Feedback.IsDeleted
                         && !c.IsDeleted)
-            .Join(dbContext.Users,
+            .Join(unitOfWork.DbContext.Users,
                 comment => comment.CreatedBy,
                 user => user.UserId,
                 (comment, user) => new

@@ -9,18 +9,17 @@ public static class ServiceCollectionRegistration
 {
     public static IServiceCollection AddInfra(this IServiceCollection services, string connectionString)
     {
-        services.AddScoped<IFeedbackHubDbContextFactory, FeedbackHubDbContextFactory>();
-
-        services.AddDbContextFactory<FeedbackHubDbContext>(options =>
-        {
-            options.UseNpgsql(connectionString, options =>
+        services
+            .AddDbContext<FeedbackHubDbContext>(options =>
             {
-                options.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
-            });
+                options.UseNpgsql(connectionString, options =>
+                {
+                    options.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+                });
 
-            options.EnableSensitiveDataLogging();
-            options.EnableDetailedErrors();
-        });
+                options.EnableSensitiveDataLogging();
+                options.EnableDetailedErrors();
+            });
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 

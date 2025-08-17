@@ -12,7 +12,7 @@ public sealed record CreateNewCommentCommand(
     Guid? ParentCommentId);
 
 public sealed class AddCommentToFeedbackCommandHandler(
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     IUserContext currentUser,
     IAuthorizationService authorizationService,
     IValidator<CreateNewCommentCommand> validator)
@@ -26,9 +26,7 @@ public sealed class AddCommentToFeedbackCommandHandler(
             return ServiceResult.WithError(validationResult.Errors.First().ErrorCode);
         }
 
-        var dbContext = dbContextFactory.Create();
-
-        var feedback = await dbContext
+        var feedback = await unitOfWork.DbContext
             .Feedbacks
             .Include(f => f.Comments)
             .SingleAsync(c => c.FeedbackId == command.FeedbackId, cancellationToken);
@@ -47,7 +45,7 @@ public sealed class AddCommentToFeedbackCommandHandler(
 
         feedback.AddComment(newComment);
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return ServiceResult.Success;
     }

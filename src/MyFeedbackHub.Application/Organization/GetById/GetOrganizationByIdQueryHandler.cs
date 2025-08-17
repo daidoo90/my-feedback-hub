@@ -8,12 +8,12 @@ namespace MyFeedbackHub.Application.Organization;
 public sealed record GetOrganizationByIdQuery(Guid OrganizationId);
 
 public sealed class GetOrganizationByIdQueryHandler(
-    IFeedbackHubDbContextFactory dbContextFactory) : IQueryHandler<GetOrganizationByIdQuery, OrganizationDomain?>
+    IUnitOfWork unitOfWork) : IQueryHandler<GetOrganizationByIdQuery, OrganizationDomain?>
 {
     public async Task<ServiceDataResult<OrganizationDomain?>> HandleAsync(GetOrganizationByIdQuery query, CancellationToken cancellationToken = default)
     {
-        var dbContext = dbContextFactory.Create();
-        var project = await dbContext
+        var project = await unitOfWork
+            .DbContext
             .Organizations
             .Include(o => o.Projects)
             .AsNoTracking()

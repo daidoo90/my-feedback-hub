@@ -8,7 +8,7 @@ namespace MyFeedbackHub.Application.Project;
 public sealed record GetProjectByIdQuery(Guid ProjectId);
 
 public sealed class GetProjectByIdQueryHandler(
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     IAuthorizationService authorizationService)
     : IQueryHandler<GetProjectByIdQuery, ProjectDomain>
 {
@@ -19,8 +19,8 @@ public sealed class GetProjectByIdQueryHandler(
             return ServiceDataResult<ProjectDomain>.WithError(ErrorCodes.Feedback.NotFound);
         }
 
-        var dbContext = dbContextFactory.Create();
-        var project = await dbContext
+        var project = await unitOfWork
+            .DbContext
             .Projects
             .AsNoTracking()
             .SingleOrDefaultAsync(p => p.ProjectId == query.ProjectId

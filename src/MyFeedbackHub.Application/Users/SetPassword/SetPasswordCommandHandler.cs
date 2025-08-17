@@ -8,7 +8,7 @@ namespace MyFeedbackHub.Application.Users;
 public sealed record SetPasswordCommand(string Username, string Password);
 
 public sealed class SetPasswordCommandHandler(
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     ICryptoService cryptoService,
     IValidator<SetPasswordCommand> validator)
     : ICommandHandler<SetPasswordCommand>
@@ -21,14 +21,15 @@ public sealed class SetPasswordCommandHandler(
             return ServiceDataResult<CreateNewUserCommandResult>.WithError(validationResult.Errors.First().ErrorCode);
         }
 
-        var dbContext = dbContextFactory.Create();
-        var user = await dbContext.Users
+        var user = await unitOfWork
+            .DbContext
+            .Users
             .SingleAsync(u => u.Username == command.Username, cancellationToken);
 
         var hashedPassword = cryptoService.HashPassword(command.Password, out var salt);
         user.SetFirstPassword(hashedPassword, Convert.ToBase64String(salt));
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return ServiceResult.Success;
     }

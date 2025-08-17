@@ -7,15 +7,15 @@ namespace MyFeedbackHub.Application.Feedback;
 public sealed record DeleteFeedbackCommand(Guid FeedbackId);
 
 public class DeleteFeedbackCommandHandler(
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     IUserContext currentUser)
     : ICommandHandler<DeleteFeedbackCommand>
 {
     public async Task<ServiceResult> HandleAsync(DeleteFeedbackCommand command, CancellationToken cancellationToken = default)
     {
-        var dbContext = dbContextFactory.Create();
-
-        var feedback = await dbContext.Feedbacks
+        var feedback = await unitOfWork
+            .DbContext
+            .Feedbacks
             .SingleOrDefaultAsync(f => f.FeedbackId == command.FeedbackId
                                       && f.CreatedBy == currentUser.UserId, cancellationToken);
 
@@ -28,7 +28,7 @@ public class DeleteFeedbackCommandHandler(
 
         feedback.Delete(DateTimeOffset.UtcNow, currentUser.UserId);
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return ServiceResult.Success;
     }

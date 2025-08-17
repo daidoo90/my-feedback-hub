@@ -16,15 +16,15 @@ public sealed record UpdateOrganizationCommand(
     string StreetLine2);
 
 public sealed class UpdateOrganizationCommandHandler(
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     IUserContext currentUser,
     IValidator<UpdateOrganizationCommand> validator)
     : ICommandHandler<UpdateOrganizationCommand>
 {
     public async Task<ServiceResult> HandleAsync(UpdateOrganizationCommand command, CancellationToken cancellationToken = default)
     {
-        var dbContext = dbContextFactory.Create();
-        var organization = await dbContext
+        var organization = await unitOfWork
+            .DbContext
             .Organizations
             .SingleOrDefaultAsync(o => o.OrganizationId == currentUser.OrganizationId, cancellationToken);
 
@@ -53,7 +53,7 @@ public sealed class UpdateOrganizationCommandHandler(
             command.StreetLine1,
             command.StreetLine2);
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return ServiceResult.Success;
     }

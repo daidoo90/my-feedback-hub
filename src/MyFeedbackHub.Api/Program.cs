@@ -31,7 +31,7 @@ if (app.Environment.IsDevelopment())
 
 using (var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<IFeedbackHubDbContextFactory>().Create();
+    var dbContext = scope.ServiceProvider.GetRequiredService<IUnitOfWork>().DbContext;
 
     dbContext.Database.Migrate();
 }

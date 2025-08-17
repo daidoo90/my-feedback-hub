@@ -13,7 +13,7 @@ public sealed record UpdateProjectCommand(
     string? Description);
 
 public sealed class UpdateProjectCommandHandler(
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     IUserContext currentUser,
     IAuthorizationService authorizationService,
     IValidator<UpdateProjectCommand> validator)
@@ -32,8 +32,8 @@ public sealed class UpdateProjectCommandHandler(
             return ServiceResult.WithError(validationResult.Errors.First().ErrorCode);
         }
 
-        var dbContext = dbContextFactory.Create();
-        var project = await dbContext
+        var project = await unitOfWork
+            .DbContext
             .Projects
             .SingleOrDefaultAsync(p => p.ProjectId == command.ProjectId
                                         && p.OrganizationId == currentUser.OrganizationId,
@@ -46,7 +46,7 @@ public sealed class UpdateProjectCommandHandler(
             DateTimeOffset.UtcNow,
             currentUser.UserId);
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return ServiceResult.Success;
     }

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MyFeedbackHub.BackgroundServices": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
