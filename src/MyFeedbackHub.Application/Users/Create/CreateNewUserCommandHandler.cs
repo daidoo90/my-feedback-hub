@@ -12,13 +12,13 @@ public sealed record CreateNewUserCommand(
     UserRoleType Role,
     Guid? ProjectId);
 
-public sealed record CreateNewUserCommandResult(string InvitationToken);
+public sealed record CreateNewUserCommandResult(Guid Token);
 
 public sealed class CreateNewUserCommandHandler(
-    IFeedbackHubDbContextFactory dbContextFactory,
+    IUnitOfWork unitOfWork,
     IUserContext currentUser,
-    IUserInvitationService userInvitationService,
-    IValidator<CreateNewUserCommand> validator)
+    IValidator<CreateNewUserCommand> validator,
+    IOutboxService outboxService)
     : ICommandHandler<CreateNewUserCommand, CreateNewUserCommandResult>
 {
     public async Task<ServiceDataResult<CreateNewUserCommandResult>> HandleAsync(CreateNewUserCommand command, CancellationToken cancellationToken = default)
@@ -47,15 +47,12 @@ public sealed class CreateNewUserCommandHandler(
             });
         }
 
-        newUser.AddDomainEvent(new UserCreatedDomainEvent(newUser));
+        await unitOfWork.DbContext.Users.AddAsync(newUser, cancellationToken);
 
-        var dbContext = dbContextFactory.Create();
-        await dbContext.Users.AddAsync(newUser, cancellationToken);
+        var messageId = await outboxService.AddAsync(new UserCreatedEvent(newUser), cancellationToken);
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        var invitationToken = await userInvitationService.GetInvitationTokenAsync(newUser.Username, cancellationToken);
-
-        return ServiceDataResult<CreateNewUserCommandResult>.WithData(new CreateNewUserCommandResult(invitationToken));
+        return ServiceDataResult<CreateNewUserCommandResult>.WithData(new CreateNewUserCommandResult(messageId));
     }
 }

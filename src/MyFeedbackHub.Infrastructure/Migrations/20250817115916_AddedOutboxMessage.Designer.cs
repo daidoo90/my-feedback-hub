@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyFeedbackHub.Infrastructure.DAL.Context;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyFeedbackHub.Infrastructure.Migrations
 {
     [DbContext(typeof(FeedbackHubDbContext))]
-    partial class FeedbackHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250817115916_AddedOutboxMessage")]
+    partial class AddedOutboxMessage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -305,7 +308,7 @@ namespace MyFeedbackHub.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTimeOffset?>("ProcessedOn")
+                    b.Property<DateTimeOffset>("ProcessedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("RetryCount")

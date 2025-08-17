@@ -39,7 +39,19 @@ services:
     networks:
         - myfeedbackhub-network
 
+  myfeedbackhub.rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"    # RabbitMQ messaging port
+      - "15672:15672"  # RabbitMQ management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - myfeedbackhub-network
+
 networks:
   myfeedbackhub-network:
-    name: myfeeedbackhub-network
+    name: myfeedbackhub-network
     driver: bridge

@@ -22,6 +22,8 @@ public static class ServiceCollectionRegistration
             options.EnableDetailedErrors();
         });
 
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+
         return services;
     }
 }

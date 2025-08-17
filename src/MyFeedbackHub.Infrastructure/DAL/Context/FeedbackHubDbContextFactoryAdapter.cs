@@ -18,13 +18,13 @@ public class FeedbackHubDbContextFactory : IDbContextFactory<FeedbackHubDbContex
     {
         var options = _provider.GetRequiredService<DbContextOptions<FeedbackHubDbContext>>();
         var dispatcher = _provider.GetRequiredService<IDomainEventDispatcher>();
-        return new FeedbackHubDbContext(options, dispatcher);
+        return new FeedbackHubDbContext(options);
     }
 
     public IFeedbackHubDbContext Create()
     {
         var options = _provider.GetRequiredService<DbContextOptions<FeedbackHubDbContext>>();
         var dispatcher = _provider.GetRequiredService<IDomainEventDispatcher>();
-        return new FeedbackHubDbContext(options, dispatcher);
+        return new FeedbackHubDbContext(options);
     }
 }

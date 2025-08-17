@@ -56,7 +56,7 @@ internal static class ApplicationDomain
 
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 
-        services.AddScoped<IDomainEventHandler<UserCreatedDomainEvent>, SendWelcomeEmailEventHandler>();
+        services.AddScoped<IDomainEventHandler<UserCreatedEvent>, SendWelcomeEmailEventHandler>();
 
         return services;
     }

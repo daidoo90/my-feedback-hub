@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using MyFeedbackHub.Application.Shared.Abstractions;
+using MyFeedbackHub.Infrastructure.AMQP;
 using MyFeedbackHub.Infrastructure.Common;
 using MyFeedbackHub.Infrastructure.Services;
 using MyFeedbackHub.SharedKernel.Configurations;
@@ -15,6 +16,10 @@ internal static class Infrastructure
         services.AddDb(builder);
 
         services.AddRedis(builder);
+
+        services.AddRabitMQ(builder);
+
+        services.AddScoped<IOutboxService, OutboxService>();
 
         return services;
     }
@@ -66,6 +71,19 @@ internal static class Infrastructure
             .ValidateOnStart();
 
         services.AddScoped<IEmailService, EmailService>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddRabitMQ(this IServiceCollection services, WebApplicationBuilder builder)
+    {
+        builder.Services
+            .AddOptions<RabbitMQConfigurations>()
+            .BindConfiguration(RabbitMQConfigurations.ConfigurationName)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        builder.Services.AddSingleton<IMessagePublisherService, MessagePublisherServicer>();
 
         return services;
     }

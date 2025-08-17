@@ -5,6 +5,7 @@ using MyFeedbackHub.Domain.Feedback;
 using MyFeedbackHub.Domain.Organization;
 using MyFeedbackHub.Domain.Shared.Domains;
 using MyFeedbackHub.Infrastructure.DAL.Configurators;
+using MyFeedbackHub.Infrastructure.DAL.Entities;
 
 namespace MyFeedbackHub.Infrastructure.DAL.Context;
 
@@ -12,30 +13,32 @@ public class FeedbackHubDbContext : DbContext, IFeedbackHubDbContext
 {
     private readonly IDomainEventDispatcher _domainEventDispatcher;
 
-    public FeedbackHubDbContext()
-    {
-
-    }
-
     public FeedbackHubDbContext(DbContextOptions options)
         : base(options)
     {
     }
 
-    public FeedbackHubDbContext(
-        DbContextOptions options,
-        IDomainEventDispatcher domainEventDispatcher)
-        : this(options)
-    {
-        _domainEventDispatcher = domainEventDispatcher;
-    }
+    //public FeedbackHubDbContext(
+    //    DbContextOptions options,
+    //    IDomainEventDispatcher domainEventDispatcher)
+    //    : this(options)
+    //{
+    //    _domainEventDispatcher = domainEventDispatcher;
+    //}
 
     public DbSet<OrganizationDomain> Organizations { get; set; }
+
     public DbSet<ProjectDomain> Projects { get; set; }
+
     public DbSet<UserDomain> Users { get; set; }
+
     public DbSet<ProjectAccess> ProjectAccess { get; set; }
+
     public DbSet<FeedbackDomain> Feedbacks { get; set; }
+
     public DbSet<CommentDomain> Comments { get; set; }
+
+    public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -53,12 +56,33 @@ public class FeedbackHubDbContext : DbContext, IFeedbackHubDbContext
         var result = await base.SaveChangesAsync(cancellationToken);
 
         // Sending domain events
-        await _domainEventDispatcher.DispatchAsync(domainEvents, cancellationToken);
+        //await _domainEventDispatcher.DispatchAsync(domainEvents, cancellationToken);
 
         // Clear domain events
-        foreach (var entry in ChangeTracker.Entries<BaseDomain>())
-            entry.Entity.ClearDomainEvents();
+        //foreach (var entry in ChangeTracker.Entries<BaseDomain>())
+        //    entry.Entity.ClearDomainEvents();
 
         return result;
     }
+}
+
+public class UnitOfWork : IUnitOfWork
+{
+    private readonly FeedbackHubDbContext _dbContext;
+
+    public UnitOfWork(IDbContextFactory<FeedbackHubDbContext> contextFactory)
+    {
+        _dbContext = contextFactory.CreateDbContext();
+    }
+
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public void Dispose() => _dbContext.Dispose();
+
+    public ValueTask DisposeAsync() => _dbContext.DisposeAsync();
+
+    public IFeedbackHubDbContext DbContext => _dbContext;
 }
